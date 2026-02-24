@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>A casa di Mrs. Rose Bear 2.0</title>
+<link rel="stylesheet" href="style.css">
+<script>
+let nickname = "";
+let fotoData = "";
+let timbri = [];
+let lettereRaccolte = "";
+let fraseCorretta = "A CHI AMA LE PAROLE BELLE, LA GENTILEZZA E LA MAGIA. A TE";
+let paginaPassaporto = 0;
+let mancheAttuale = 0;
+
+// Suoni
+const suoni = {
+  passaporto: new Audio('suoni/PASSAPORTO.wav'),
+  giusto: new Audio('suoni/GIUSTO.wav'),
+  sbagliato: new Audio('suoni/SBAGLIATO.wav'),
+  timbro: new Audio('suoni/TIMBRO.wav'),
+  pagina: new Audio('suoni/PAGINE.wav'),
+  alert: new Audio('suoni/ALERT.wav'),
+  vittoria: new Audio('suoni/VITTORIA.wav')
+};
+
+// Liste delle manche
+const manche = [
+  {
+    nome: "FIORAIA",
+    colore: "#006E00",
+    tipo: "match",
+    domande: [
+      {immagine:"immagini/FIORE_1.png", opzioni:["Papavero","Anemone giapponese","Peonia","Elleboro"], risposta:"Anemone giapponese"},
+      {immagine:"immagini/FIORE_2.png", opzioni:["Ortensia","Plumbago","Allium","Agapanto"], risposta:"Allium"},
+      {immagine:"immagini/FIORE_3.png", opzioni:["Zinnia","Crisantemo","Gerbera","Dalia"], risposta:"Dalia"},
+      {immagine:"immagini/FIORE_4.png", opzioni:["Brugo","Erica","Fabiana imbricata","Veronica"], risposta:"Brugo"}
+    ]
+  },
+  {
+    nome: "BAKERY",
+    colore: "#873324",
+    tipo: "quiz",
+    domande: [
+      {testo:"Qual è la funzione principale del lievito madre nella panificazione?", opzioni:["Aggiungere colore alla crosta","Far lievitare l’impasto naturalmente e dare sapore","Conservare il pane più a lungo"], risposta:1},
+      {testo:"Quale tipo di farina è più ricca di fibre e nutrienti rispetto alla farina bianca?", opzioni:["Farina 00","Farina integrale (wholemeal)","Farina per dolci"], risposta:1},
+      {testo:"Quale pane britannico è preparato senza lievito, usando bicarbonato di sodio come agente lievitante?", opzioni:["Victoria sandwich loaf","Soda bread","Milk bread loaf"], risposta:1},
+      {testo:"Quale tipo di pane è noto per essere morbido, leggermente dolce e spesso usato per colazioni o toast in stile giapponese?", opzioni:["Wholemeal loaf","Milk bread loaf","Victoria sandwich loaf"], risposta:1}
+    ]
+  },
+  {
+    nome: "SCUOLA",
+    colore: "#24872B",
+    tipo: "quiz",
+    domande: [
+      {testo:"“_______, uguaglianza, fraternità”", opzioni:["Libertà","Pace","Amore","Onore"], risposta:0},
+      {testo:"La somma degli angoli interni di un _______ è 180°", opzioni:["Quadrato","Cerchio","Triangolo","Rettangolo"], risposta:2},
+      {testo:"Il processo con cui le piante producono _______ usando luce e CO₂", opzioni:["Ossigeno","Zuccheri","Acqua","Clorofilla"], risposta:1},
+      {testo:"Nel romanzo I Promessi Sposi, Don Abbondio cerca di evitare i _______ a tutti i costi", opzioni:["Guai","Compiti","Problemi matematici","Viaggi"], risposta:0},
+      {testo:"Il _______ più lungo del mondo", opzioni:["Mare","Lago","Fiume","Monte"], risposta:2},
+      {testo:"Gli _______ si muovono intorno al nucleo dell’atomo in orbite definite", opzioni:["Atomi","Elettroni","Protoni","Neutroni"], risposta:1},
+      {testo:"Il _______ è stato un periodo di grande fioritura culturale e artistica", opzioni:["Rinascimento","Medioevo","Futurismo","Illuminismo"], risposta:0},
+      {testo:"La _______ quadrata di un numero è il valore che moltiplicato per se stesso dà quel numero", opzioni:["Radice","Somma","Differenza","Potenza"], risposta:0}
+    ]
+  },
+  {
+    nome: "CABINA TELEFONICA",
+    colore: "#FF0014",
+    tipo: "match",
+    domande: [
+      {oggetto:"Nastri", negozio:"Merceria"},
+      {oggetto:"Peluche", negozio:"Negozio di giocattoli"},
+      {oggetto:"Buste e francobolli", negozio:"Post office"},
+      {oggetto:"Bottoni", negozio:"Merceria"},
+      {oggetto:"Tazza da tè", negozio:"Tea room"},
+      {oggetto:"Puzzle", negozio:"Negozio di giocattoli"},
+      {oggetto:"Mazzo di rose", negozio:"Fioreria"},
+      {oggetto:"Carta da lettere", negozio:"Post office"}
+    ]
+  },
+  {
+    nome: "BOOKCROSSING",
+    colore: "#248287",
+    tipo: "virtual",
+    domande: [] // sarà gestito come gioco interattivo con due scaffali
+  },
+  {
+    nome: "INGRESSO DEL COTTAGE",
+    colore: "#000000",
+    tipo: "lettere",
+    testo:"Durante il percorso hai notato qualcosa di insolito? Qualche lettera persa lungo le vie di Little Country! Torna indietro e annotale tutte, chissà… Ti potrebbero servire!"
+  },
+  {
+    nome: "STANZA RICREATIVA",
+    colore: "#1A2AE6",
+    tipo: "musica",
+    domande: [
+      {audio:"immagini/MUSICA_1.wav", opzioni:["Wolfgang Amadeus Mozart","Joseph Haydn","Franz Schubert","Anton Bruckner"], risposta:0},
+      {audio:"immagini/MUSICA_2.wav", opzioni:["Ludwig van Beethoven","Johann Sebastian Bach","Richard Wagner","Johannes Brahms"], risposta:1},
+      {audio:"immagini/MUSICA_3.wav", opzioni:["Giuseppe Verdi","Gioachino Rossini","Antonio Vivaldi","Claudio Monteverdi"], risposta:2},
+      {audio:"immagini/MUSICA_4.wav", opzioni:["Rimsky Korsakov","Claude Debussy","Hector Berlioz","Camille Saint-Saëns"], risposta:0}
+    ]
+  },
+  {
+    nome: "SALOTTO",
+    colore: "#89C689",
+    tipo: "quiz",
+    domande: [
+      {testo:"El Mundo appartiene a:", opzioni:["UK","Spagna","USA","Francia"], risposta:1},
+      {testo:"Financial Times appartiene a:", opzioni:["UK","Spagna","USA","Germania"], risposta:0},
+      {testo:"The Guardian appartiene a:", opzioni:["USA","UK","Spagna","Francia"], risposta:1},
+      {testo:"Vogue appartiene a:", opzioni:["UK","Francia","USA","Spagna"], risposta:2}
+    ]
+  },
+  {
+    nome: "STANZA DEL CUSTODE",
+    colore: "#00A4AC",
+    tipo: "quiz",
+    domande: [
+      {testo:"Quante sedie con stemma araldico sono presenti nella Great Hall?", opzioni:["10","12","14","16"], risposta:1},
+      {testo:"Quanti volumi catalogati ci sono nella Library?", opzioni:["400","405","412","420"], risposta:2},
+      {testo:"Quanti manoscritti miniati sono conservati nella Library?", opzioni:["3","5","7","10"], risposta:1},
+      {testo:"Di che materiale è il tavolo centrale nella Great Hall?", opzioni:["Rovere","Noce","Quercia","Mogano"], risposta:2},
+      {testo:"Quanti pezzi compongono il servizio d’argento nella Dining Hall?", opzioni:["60","68","72","75"], risposta:2},
+      {testo:"Quanti ritratti di famiglia sono catalogati e assicurati tra gli oggetti di valore?", opzioni:["12","14","16","18"], risposta:1},
+      {testo:"Quale anno è indicato come aggiornamento dell’impianto di illuminazione nella Great Hall?", opzioni:["1985","1990","1998","2000"], risposta:2},
+      {testo:"Quanti pezzi compongono il servizio bicchieri in cristallo molato nella Dining Hall?", opzioni:["Non specificato","72","60","50"], risposta:0},
+      {testo:"Quanti manoscritti miniati sono conservati in teca climatizzata?", opzioni:["3","5","7","10"], risposta:1},
+      {testo:"Dove è conservato il Galateo di Monsignor della Casa?", opzioni:["Tavolo della Dining Hall","Leggio in rovere nella Library","Scrivania in Master Apartments","Credenza nella Dining Hall"], risposta:1}
+    ]
+  },
+  {
+    nome: "CASTELLO DI LADY ELEONORA",
+    colore: "#003EAC",
+    tipo: "frase",
+    testo:"Hai raccolto tutte le lettere sparse in giro per il percorso? Se sì, ricomponi la frase aggiungendo gli spazi mancanti."
+  }
+];
+</script>
+</head>
+<body>
+<div id="game-container">
+  <!-- Qui andranno le schermate dinamiche generate da JS -->
+</div>
+<script src="game.js"></script>
+</body>
+</html>
