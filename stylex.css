@@ -1,0 +1,206 @@
+/* ====== STILI GENERALI ====== */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+    height: 100%;
+}
+
+#game-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* ====== HOME PAGE ====== */
+.home-bg {
+    width: 100%;
+    height: 100%;
+    background-color: #19495F;
+    position: absolute;
+    top:0;
+    left:0;
+    z-index: -1;
+}
+
+.title {
+    font-family: "Libel Suite", sans-serif;
+    font-size: 3em;
+    color: white;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.instructions {
+    font-size: 1.1em;
+    margin: 20px;
+    text-align: center;
+}
+
+.rose-img {
+    width: 200px;
+    margin: 20px auto;
+    display: block;
+}
+
+.nickname-input {
+    font-size: 1em;
+    padding: 10px;
+    width: 250px;
+    text-align: center;
+    margin: 10px;
+}
+
+.play-btn, .photo-btn, .pass-btn, button {
+    background-color: white;
+    color: #19495F;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.play-btn:hover, .photo-btn:hover, .pass-btn:hover, button:hover {
+    opacity: 0.8;
+}
+
+/* ====== NICKNAME E FOTO ====== */
+.nickname {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 1.2em;
+}
+
+/* ====== PASSAPORTO ====== */
+.passaporto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cover {
+    width: 300px;
+    margin: 20px;
+}
+
+.nick-pass {
+    margin-top: 10px;
+    font-size: 1.2em;
+}
+
+.nav-pass {
+    position: absolute;
+    bottom: 20px;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.nav-pass:first-of-type { left: 20px; }
+.nav-pass:last-of-type { right: 20px; }
+
+.page-passaporto {
+    display: flex;
+    justify-content: space-around;
+    width: 80%;
+    margin-top: 20px;
+}
+
+.timbro {
+    width: 80px;
+    height: 80px;
+}
+
+/* ====== MANCHES ====== */
+h2 {
+    font-family: "IM Fell English", serif;
+    font-weight: bold;
+    font-size: 2em;
+    margin: 10px 0;
+}
+
+.question {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+select {
+    font-size: 1em;
+    padding: 5px;
+    margin: 5px 0;
+}
+
+/* Bottoni quiz e matching */
+button {
+    display: block;
+    margin: 5px auto;
+    padding: 10px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Feedback corretto e sbagliato */
+.correct { background-color: #00CC44; color: #fff; }
+.wrong { background-color: #FF3333; color: #fff; }
+
+/* ====== LETTERE (Manche 6) ====== */
+input[type="text"] {
+    padding: 10px;
+    font-size: 1.2em;
+    width: 300px;
+    text-align: center;
+    margin: 10px;
+}
+
+/* ====== MUSICA ====== */
+button {
+    min-width: 200px;
+}
+
+/* ====== FRASE FINALE (Manche 10) ====== */
+#frase-input {
+    font-size: 1.2em;
+    padding: 10px;
+    width: 400px;
+    text-align: center;
+    margin: 10px auto;
+}
+
+#frase-btn {
+    background-color: #FF0000;
+    color: white;
+    font-size: 1em;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* ====== GRAZIE FINALE ====== */
+.thanks-screen {
+    font-family: "Libel Suite", sans-serif;
+    font-size: 3em;
+    color: #FF0000;
+    text-align: center;
+    margin-top: 100px;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 600px) {
+    .rose-img { width: 150px; }
+    .title { font-size: 2em; }
+    .nickname-input { width: 200px; }
+    .timbro { width: 60px; height: 60px; }
+    button { font-size: 0.9em; padding: 8px 12px; }
+    #frase-input { width: 250px; font-size: 1em; }
+}
