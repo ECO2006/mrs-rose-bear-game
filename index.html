@@ -104,7 +104,10 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 /* ═══ PASSAPORTO ═══ */
 .screen-passport{
   position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.88);
-  display:flex!important;align-items:center;justify-content:center;padding:16px
+  display:none;align-items:center;justify-content:center;padding:16px
+}
+.screen-passport.visible{
+  display:flex;
 }
 .passport-container{
   background:#f5ede0;border-radius:16px;max-width:480px;width:100%;
@@ -277,7 +280,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 </main>
 
 <!-- ═══ PASSAPORTO ═══ -->
-<div id="screen-passport" class="screen hidden screen-passport">
+
   <div class="passport-container">
     <div class="passport-page" id="passport-cover">
       <img src="immagini/COPERTINA.png" alt="" class="passport-cover-bg" onerror="this.style.opacity=0"/>
@@ -604,7 +607,7 @@ function openPassport(){
   const ms=S.stamps.length;
   ppPage = ms===0?0 : ms<=3?1 : ms<=6?2 : 3;
   renderPP();
-  document.getElementById('screen-passport').classList.remove('hidden');
+  document.getElementById('screen-passport').classList.add('visible');
 }
 
 function updatePassport(){
@@ -629,7 +632,7 @@ function renderPP(){
 }
 
 function setupPassport(){
-  document.getElementById('btn-close-passport').onclick=()=>document.getElementById('screen-passport').classList.add('hidden');
+  document.getElementById('btn-close-passport').onclick=()=>document.getElementById('screen-passport').classList.remove('visible');
   document.getElementById('passport-prev').onclick=()=>{if(ppPage>0){ppPage--;sfx.pagine();renderPP()}};
   document.getElementById('passport-next').onclick=()=>{if(ppPage<3){ppPage++;sfx.pagine();renderPP()}};
 }
@@ -1016,7 +1019,7 @@ function setupEnd(){
   document.getElementById('btn-end-passport').onclick=()=>{
     document.getElementById('overlay-end').classList.add('hidden');
     updatePassport(); ppPage=0; renderPP();
-    document.getElementById('screen-passport').classList.remove('hidden');
+    document.getElementById('screen-passport').classList.add('visible');
   };
   document.getElementById('btn-collage').onclick=generateCollage;
   document.getElementById('btn-exit').onclick=()=>{
