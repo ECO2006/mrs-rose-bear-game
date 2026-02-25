@@ -246,4 +246,5 @@ function renderFraseFinale(m){
 }
 
 // Avvio
+
 showHomePage();
