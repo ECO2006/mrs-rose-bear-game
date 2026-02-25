@@ -513,21 +513,36 @@ function showOnly(id){
 document.addEventListener('DOMContentLoaded',()=>{
   S.load();
 
-  // Istruzioni all'avvio
-  document.getElementById('btn-close-instructions').onclick=()=>{
-    document.getElementById('overlay-instructions').classList.add('hidden');
-    initHome();
-  };
-
   // Leggi ?manche=X
   const params=new URLSearchParams(location.search);
   const mp=params.get('manche');
 
+  // Istruzioni: mostra solo al primo avvio assoluto (senza nickname)
+  const istruzioniOverlay=document.getElementById('overlay-instructions');
+  if(!S.nick && !mp){
+    // Primo avvio: mostra istruzioni
+    istruzioniOverlay.classList.remove('hidden');
+  } else {
+    // Già registrato o link diretto: nascondi subito le istruzioni
+    istruzioniOverlay.classList.add('hidden');
+  }
+
+  document.getElementById('btn-close-instructions').onclick=()=>{
+    istruzioniOverlay.classList.add('hidden');
+    initHome();
+  };
+
+  // Routing
   if(mp && S.nick){
+    // Link diretto a manche con nickname già salvato
     showOnly('screen-manche');
     showHeader(); showNav();
     loadManche(+mp);
+  } else if(mp && !S.nick){
+    // Link a manche ma senza nickname: va alla home per registrarsi
+    showOnly('screen-home');
   } else {
+    // Home normale
     showOnly('screen-home');
     if(S.nick){
       showHeader(); showNav();
