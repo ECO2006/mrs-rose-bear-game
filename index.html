@@ -1,222 +1,1095 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>A casa di Mrs. Rose Bear 2.0 – Visitor Passport</title>
-  <link rel="stylesheet" href="style.css" />
-  <!-- html5-qrcode per scanner QR -->
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <!-- Google Fonts – IM Fell English (corpo manche) -->
-  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet"/>
-  <!-- Libel Suit via @font-face sarà in style.css; fallback serif in attesa del font -->
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
+<title>A casa di Mrs. Rose Bear 2.0 – Visitor Passport</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+/* ═══ RESET & BASE ═══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#19495F;--white:#fff;
+  --font-title:'Playfair Display','Georgia',serif;
+  --font-body:Arial,Helvetica,sans-serif;
+  --font-manche:'IM Fell English',serif;
+  --hh:56px;--nh:64px;--r:12px;
+  --shadow:0 4px 24px rgba(0,0,0,.35);
+  --tr:.25s ease;
+}
+html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:var(--white);overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.hidden{display:none!important}
+.screen{min-height:100vh;padding-top:calc(var(--hh)+8px);padding-bottom:calc(var(--nh)+12px)}
+
+/* ═══ HEADER ═══ */
+.app-header{
+  position:fixed;top:0;left:0;right:0;height:var(--hh);
+  background:rgba(25,73,95,.97);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;z-index:900;border-bottom:1px solid rgba(255,255,255,.15)
+}
+.header-title{font-family:var(--font-title);font-size:clamp(.95rem,3.2vw,1.25rem);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55vw}
+.header-user{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.header-photo{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.5)}
+.header-nickname{font-size:.9rem;font-weight:bold;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ═══ HOME ═══ */
+.screen-home{display:flex;align-items:center;justify-content:center;flex-direction:column;background:var(--bg)}
+.home-center{display:flex;flex-direction:column;align-items:center;gap:20px;padding:24px 20px;width:100%;max-width:480px}
+.home-rose{max-width:min(300px,80vw);object-fit:contain;filter:drop-shadow(0 8px 24px rgba(0,0,0,.4))}
+.home-form{display:flex;flex-direction:column;gap:14px;width:100%;max-width:340px}
+.nickname-input{
+  background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.3);
+  border-radius:var(--r);padding:14px 18px;font-size:1.1rem;
+  color:var(--white);text-align:center;font-family:var(--font-body);outline:none;
+  transition:border-color var(--tr)
+}
+.nickname-input::placeholder{color:rgba(255,255,255,.5)}
+.nickname-input:focus{border-color:rgba(255,255,255,.8)}
+
+/* ═══ BUTTONS ═══ */
+.btn-primary,.btn-secondary{
+  border:none;border-radius:var(--r);padding:14px 28px;
+  font-size:1rem;font-family:var(--font-body);font-weight:bold;
+  cursor:pointer;transition:transform .1s;display:inline-block;text-align:center
+}
+.btn-primary{background:var(--white);color:var(--bg)}
+.btn-primary:active{transform:scale(.96)}
+.btn-secondary{background:rgba(255,255,255,.15);color:var(--white);border:1.5px solid rgba(255,255,255,.4)}
+.btn-secondary:active{transform:scale(.96)}
+
+/* ═══ BOTTOM NAV ═══ */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;height:var(--nh);
+  background:rgba(10,40,55,.98);display:flex;align-items:center;
+  justify-content:flex-end;gap:8px;padding:0 12px;
+  z-index:900;border-top:1px solid rgba(255,255,255,.12)
+}
+.nav-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+  border-radius:10px;color:#fff;font-size:1.2rem;font-family:var(--font-body);
+  font-weight:bold;padding:6px 12px;min-width:62px;cursor:pointer;
+  transition:background var(--tr)
+}
+.nav-btn span{font-size:.58rem;letter-spacing:.4px}
+.nav-btn-fioriparola{background:rgba(244,180,0,.18);border-color:rgba(244,180,0,.5)}
+.nav-btn:active{background:rgba(255,255,255,.25);transform:scale(.95)}
+
+/* ═══ OVERLAYS ═══ */
+.overlay-fullscreen{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);
+  z-index:1000;display:flex;align-items:center;justify-content:center;
+  padding:20px;backdrop-filter:blur(4px);animation:fadeIn .3s ease
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.overlay-inner{
+  background:var(--bg);border:2px solid rgba(255,255,255,.2);
+  border-radius:18px;padding:32px 28px;max-width:520px;width:100%;
+  max-height:90vh;overflow-y:auto;position:relative;box-shadow:var(--shadow)
+}
+.overlay-title{font-family:var(--font-title);font-size:1.2rem;margin-bottom:6px}
+.overlay-game-title{font-family:var(--font-title);font-size:clamp(1.3rem,5vw,1.9rem);margin-bottom:4px}
+.overlay-subtitle{font-size:1rem;margin-bottom:18px;opacity:.85}
+.overlay-inner p{font-size:.95rem;line-height:1.6;margin-bottom:12px;opacity:.9}
+.overlay-cta{font-size:1.15rem!important;font-weight:bold;opacity:1!important;margin-top:16px}
+.btn-close-overlay{
+  position:absolute;top:12px;right:14px;background:none;border:none;
+  color:var(--white);font-size:1.4rem;cursor:pointer;opacity:.7;transition:opacity .2s
+}
+.btn-close-overlay:hover{opacity:1}
+
+/* ═══ PASSAPORTO ═══ */
+.screen-passport{
+  position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.88);
+  display:flex!important;align-items:center;justify-content:center;padding:16px
+}
+.passport-container{
+  background:#f5ede0;border-radius:16px;max-width:480px;width:100%;
+  max-height:88vh;overflow:hidden;display:flex;flex-direction:column;
+  position:relative;box-shadow:0 16px 60px rgba(0,0,0,.6);color:#2a1a0e
+}
+.passport-page{
+  position:relative;flex:1;min-height:340px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:24px 20px;overflow:hidden
+}
+.passport-page-bg,.passport-cover-bg{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  border-radius:16px 16px 0 0;opacity:.18;z-index:0
+}
+.passport-cover-info{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.passport-photo-small{width:80px;height:80px;object-fit:cover;border-radius:6px;border:3px solid #2a1a0e}
+.passport-cover-label{font-family:var(--font-title);font-size:.9rem;color:#2a1a0e;opacity:.75}
+.passport-cover-name{font-family:var(--font-title);font-size:1.4rem;font-weight:900;color:#2a1a0e}
+.passport-stamps-layout{position:relative;z-index:1;width:100%}
+.stamps-col{display:flex;flex-direction:column;gap:16px;padding:8px 16px}
+.stamp-slot{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.55);border-radius:10px;padding:10px 14px;border:1.5px solid rgba(42,26,14,.15)}
+.stamp-img{width:54px;height:54px;object-fit:contain;transition:filter .4s,transform .4s}
+.stamp-img.locked{filter:grayscale(1) opacity(.25)}
+.stamp-img.earned{filter:none;transform:rotate(-4deg) scale(1.05);animation:stampIn .5s ease}
+@keyframes stampIn{0%{transform:scale(2) rotate(-10deg);opacity:0}60%{transform:scale(.95) rotate(2deg)}100%{transform:rotate(-4deg) scale(1.05);opacity:1}}
+.stamp-label{font-family:var(--font-title);font-size:1rem;color:#2a1a0e}
+.passport-nav{display:flex;align-items:center;justify-content:center;gap:20px;padding:12px 16px;background:#ede0cc;border-top:1px solid rgba(42,26,14,.15)}
+.passport-arrow{background:none;border:none;font-size:1.6rem;cursor:pointer;color:#2a1a0e;padding:4px 10px;border-radius:8px;transition:background .2s}
+.passport-arrow:hover{background:rgba(42,26,14,.1)}
+.passport-indicator{font-family:var(--font-body);font-size:.85rem;color:#2a1a0e;opacity:.65}
+.btn-close-passport{position:absolute;top:10px;right:12px;background:rgba(42,26,14,.15);border:none;border-radius:8px;color:#2a1a0e;font-size:.85rem;font-weight:bold;padding:5px 10px;cursor:pointer;z-index:10}
+
+/* ═══ MANCHE ═══ */
+.screen-manche{background:var(--bg);padding-top:calc(var(--hh)+16px);padding-bottom:calc(var(--nh)+16px);min-height:100vh;position:relative}
+.manche-splash{position:fixed;inset:0;background:var(--bg);z-index:800;display:flex!important;align-items:center;justify-content:center;animation:fadeIn .4s ease}
+.manche-splash-img{max-width:min(90vw,440px);max-height:70vh;object-fit:contain;filter:drop-shadow(0 8px 32px rgba(0,0,0,.5))}
+.manche-content{padding:16px 20px;max-width:560px;margin:0 auto}
+.manche-subtitle{font-family:var(--font-manche);font-size:clamp(1.1rem,4vw,1.5rem);font-weight:bold;text-align:center;margin-bottom:20px;line-height:1.3}
+.answer-feedback{text-align:center;font-size:1.3rem;font-weight:bold;padding:12px 20px;border-radius:var(--r);margin-bottom:16px;animation:feedbackPop .3s ease}
+@keyframes feedbackPop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.feedback-correct{background:rgba(0,110,0,.25);border:2px solid #00b800;color:#7fff7f}
+.feedback-wrong{background:rgba(180,0,0,.25);border:2px solid #ff4040;color:#ff8888}
+.game-area{width:100%}
+
+/* ═══ QUIZ ═══ */
+.quiz-question{background:rgba(255,255,255,.08);border-radius:var(--r);padding:16px 18px;margin-bottom:18px;font-size:1rem;line-height:1.5}
+.quiz-question img{display:block;max-width:100%;max-height:220px;object-fit:contain;margin:0 auto 14px;border-radius:10px}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.quiz-option{
+  background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+  border-radius:10px;padding:13px 16px;font-size:1rem;font-family:var(--font-body);
+  color:var(--white);cursor:pointer;text-align:left;transition:background var(--tr),border-color var(--tr)
+}
+.quiz-option:hover{background:rgba(255,255,255,.18)}
+.quiz-option.correct{background:rgba(0,120,0,.35)!important;border-color:#00e000!important;color:#afffaf}
+.quiz-option.wrong{background:rgba(180,0,0,.3)!important;border-color:#ff4040!important;color:#ff9090;text-decoration:line-through}
+.quiz-option:disabled{cursor:not-allowed}
+
+/* ═══ MATCHING ═══ */
+.match-game{display:flex;flex-direction:column;gap:12px}
+.match-intro{font-size:.95rem;margin-bottom:14px;opacity:.85;line-height:1.5}
+.match-item{background:rgba(255,255,255,.08);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.match-object-label{flex:0 0 130px;font-weight:bold;font-size:.9rem}
+.match-select{flex:1;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;color:var(--white);padding:8px 10px;font-family:var(--font-body);font-size:.9rem;outline:none;min-width:150px}
+.match-select option{background:#19495F;color:white}
+.match-check-btn{display:block;margin:18px auto 0;background:var(--white);color:var(--bg);border:none;border-radius:var(--r);padding:12px 28px;font-size:1rem;font-weight:bold;cursor:pointer}
+.match-item.correct-match{border:2px solid #00e000}
+.match-item.wrong-match{border:2px solid #ff4040}
+
+/* ═══ BOOKCROSSING ═══ */
+.bookcrossing-container{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.bookshelf{background:rgba(255,255,255,.07);border-radius:var(--r);padding:12px;min-height:180px}
+.bookshelf h3{font-size:.9rem;margin-bottom:10px;text-align:center;opacity:.8;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:6px}
+.bookshelf-list{display:flex;flex-direction:column;gap:6px}
+.book-entry{background:rgba(255,255,255,.1);border-radius:6px;padding:6px 8px;font-size:.78rem;animation:bookFadeIn .4s ease;word-break:break-word}
+@keyframes bookFadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.bc-input-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.bc-input-row input{flex:1;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;color:var(--white);padding:10px 12px;font-family:var(--font-body);font-size:.9rem;outline:none;min-width:100px}
+.bc-input-row input::placeholder{color:rgba(255,255,255,.4)}
+.bc-shelf-sel{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;color:var(--white);padding:10px;font-family:var(--font-body);font-size:.9rem;outline:none}
+.bc-shelf-sel option{background:#19495F}
+.bc-add-btn{background:var(--white);color:var(--bg);border:none;border-radius:8px;padding:10px 14px;font-weight:bold;cursor:pointer}
+
+/* ═══ MANCHE 6 ALERT ═══ */
+.m6-alert{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:900;display:flex;align-items:center;justify-content:center;padding:32px}
+.m6-alert-inner{max-width:500px;text-align:center}
+.m6-alert-text{font-family:var(--font-manche);font-size:clamp(1rem,4vw,1.35rem);font-weight:bold;font-style:italic;line-height:1.7;margin-bottom:24px}
+.m6-ok-btn{background:var(--white);color:var(--bg);border:none;border-radius:var(--r);padding:14px 32px;font-size:1rem;font-weight:bold;cursor:pointer}
+
+/* ═══ MUSICA ═══ */
+.music-player-area{text-align:center;margin-bottom:20px;background:rgba(255,255,255,.07);border-radius:var(--r);padding:16px}
+.music-play-btn{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);border-radius:50%;width:64px;height:64px;font-size:1.6rem;color:#fff;cursor:pointer;transition:background .2s;margin-bottom:8px}
+.music-play-btn:hover{background:rgba(255,255,255,.3)}
+.music-hint{font-size:.8rem;opacity:.65}
+
+/* ═══ FRASE ═══ */
+.frase-display{background:rgba(255,255,255,.1);border-radius:var(--r);padding:14px 16px;font-size:1.1rem;letter-spacing:2px;text-align:center;font-family:monospace;margin-bottom:16px;word-break:break-all;min-height:54px}
+.frase-input-row{display:flex;gap:8px;margin-bottom:12px}
+.frase-input{flex:1;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;color:var(--white);padding:10px 14px;font-size:1rem;font-family:var(--font-body);outline:none}
+.frase-invia-btn{background:var(--white);color:var(--bg);border:none;border-radius:8px;padding:10px 18px;font-weight:bold;cursor:pointer}
+.frase-intro-text{font-family:var(--font-manche);font-style:italic;font-size:.9rem;line-height:1.6;margin-bottom:16px;opacity:.85;background:rgba(255,255,255,.06);border-radius:var(--r);padding:12px 14px}
+
+/* ═══ TOAST TIMBRO ═══ */
+.timbro-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(0,80,0,.92);border:2px solid #00cc00;border-radius:14px;padding:12px 24px;color:#afffaf;font-size:1rem;font-weight:bold;z-index:9999;animation:toastIn .4s ease;text-align:center;pointer-events:none;white-space:nowrap}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ═══ FINE GIOCO ═══ */
+.end-inner{text-align:center;max-width:480px;padding:32px 24px}
+.end-title{font-family:var(--font-title);font-size:clamp(2rem,8vw,3.5rem);color:#ff2222;line-height:1.1;margin-bottom:28px;text-shadow:0 4px 20px rgba(255,0,0,.4)}
+#collage-canvas{max-width:100%;border-radius:8px}
+.end-dissolve{margin-top:24px;animation:fadeIn 1s ease}
+.btn-exit{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);border-radius:var(--r);color:var(--white);font-size:1rem;font-weight:bold;padding:12px 28px;cursor:pointer}
+
+/* ═══ FIORI-PAROLA ═══ */
+.fioriparola-display{background:rgba(255,255,255,.1);border-radius:var(--r);padding:12px 16px;font-size:1.5rem;letter-spacing:3px;text-align:center;font-weight:bold;min-height:52px;margin-bottom:14px;word-break:break-all;font-family:monospace}
+.fp-input-row{display:flex;gap:8px;justify-content:center}
+.fp-input{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;color:var(--white);padding:10px 14px;font-size:1.5rem;text-align:center;width:60px;font-family:monospace;text-transform:uppercase;outline:none}
+
+/* ═══ SCANNER ═══ */
+.scanner-hint{text-align:center;opacity:.65;margin-top:12px;font-size:.9rem}
+#qr-reader video{border-radius:var(--r)!important}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:360px){
+  .bookcrossing-container{grid-template-columns:1fr}
+  .match-object-label{flex:0 0 90px;font-size:.8rem}
+}
+</style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════
-     OVERLAY: ISTRUZIONI INIZIALI
-═══════════════════════════════════════════════ -->
+<!-- ═══ OVERLAY ISTRUZIONI ═══ -->
 <div id="overlay-instructions" class="overlay-fullscreen" role="dialog" aria-modal="true">
   <div class="overlay-inner">
-    <button class="btn-close-overlay" id="btn-close-instructions" aria-label="Chiudi istruzioni">✕</button>
+    <button class="btn-close-overlay" id="btn-close-instructions">✕</button>
     <h2 class="overlay-title">Benvenuto al gioco interattivo della mostra</h2>
     <h1 class="overlay-game-title">"A casa di Mrs. Rose Bear 2.0"</h1>
     <h3 class="overlay-subtitle">il Visitor Passport!</h3>
-    <p>
-      Rispondi correttamente alle domande per guadagnare il timbro e completare il tuo
-      <strong>Passaporto da visitatore di Little Country</strong>.
-    </p>
-    <p>
-      Nelle postazioni lungo il percorso di visita troverai dei piccoli cartelli tramite cui
-      potrai accedere alle varie manche del gioco, scannerizzando il <strong>QR-CODE</strong> o
-      appoggiando il telefono nell'area dedicata (se il dispositivo è abilitato per la
-      tecnologia NFC).
-    </p>
+    <p>Rispondi correttamente alle domande per guadagnare il timbro e completare il tuo <strong>Passaporto da visitatore di Little Country</strong>.</p>
+    <p>Nelle postazioni lungo il percorso troverai dei cartelli tramite cui potrai accedere alle varie manche, scannerizzando il <strong>QR-CODE</strong> o appoggiando il telefono nell'area NFC.</p>
     <p class="overlay-cta">Buon divertimento!</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     HEADER FISSO
-═══════════════════════════════════════════════ -->
+<!-- ═══ HEADER ═══ -->
 <header id="app-header" class="app-header hidden">
   <span class="header-title">A casa di Mrs. Rose Bear 2.0</span>
-  <div class="header-user" id="header-user">
-    <img id="header-photo" class="header-photo hidden" src="" alt="Foto profilo" />
+  <div class="header-user">
+    <img id="header-photo" class="header-photo hidden" src="" alt="Foto profilo"/>
     <span id="header-nickname" class="header-nickname"></span>
   </div>
 </header>
 
-<!-- ═══════════════════════════════════════════════
-     SCHERMATA HOME / SETUP
-═══════════════════════════════════════════════ -->
+<!-- ═══ HOME ═══ -->
 <main id="screen-home" class="screen screen-home">
   <div class="home-center">
-    <img src="immagini/ROSE.png" alt="Mrs. Rose Bear" class="home-rose" onerror="this.style.display='none'" />
+    <img src="immagini/ROSE.png" alt="Mrs. Rose Bear" class="home-rose" onerror="this.style.display='none'"/>
     <div class="home-form" id="home-form">
-      <label for="input-nickname" class="sr-only">Il tuo nickname</label>
-      <input
-        type="text"
-        id="input-nickname"
-        class="nickname-input"
-        placeholder="Inserisci il tuo nickname"
-        maxlength="24"
-        autocomplete="off"
-      />
+      <input type="text" id="input-nickname" class="nickname-input" placeholder="Inserisci il tuo nickname" maxlength="24" autocomplete="off"/>
       <button id="btn-play" class="btn-primary">Gioca</button>
     </div>
-    <!-- Appare dopo nickname -->
     <div id="home-photo-section" class="hidden">
       <button id="btn-take-photo" class="btn-secondary">📷 Scatta una foto</button>
-      <input type="file" id="input-photo" accept="image/*" capture="user" class="hidden" />
+      <input type="file" id="input-photo" accept="image/*" capture="user" class="hidden"/>
     </div>
-    <!-- Apri passaporto per la prima volta -->
     <div id="home-passport-btn-wrap" class="hidden">
-      <button id="btn-open-passport-home" class="btn-passport-home">Apri il Passaporto</button>
+      <button id="btn-open-passport-home" class="btn-primary">Apri il Passaporto</button>
     </div>
   </div>
 </main>
 
-<!-- ═══════════════════════════════════════════════
-     SCHERMATA PASSAPORTO
-═══════════════════════════════════════════════ -->
+<!-- ═══ PASSAPORTO ═══ -->
 <div id="screen-passport" class="screen hidden screen-passport">
   <div class="passport-container">
-    <!-- Copertina -->
     <div class="passport-page" id="passport-cover">
-      <img src="immagini/COPERTINA.png" alt="Copertina Passaporto" class="passport-cover-bg" onerror="this.style.opacity=0.2"/>
+      <img src="immagini/COPERTINA.png" alt="" class="passport-cover-bg" onerror="this.style.opacity=0"/>
       <div class="passport-cover-info">
-        <img id="passport-photo-img" src="" alt="Foto visitatore" class="passport-photo-small hidden" />
+        <img id="passport-photo-img" src="" alt="Foto visitatore" class="passport-photo-small hidden"/>
         <p class="passport-cover-label">Il Visitor Passport di</p>
         <p class="passport-cover-name" id="passport-cover-name"></p>
       </div>
     </div>
-
-    <!-- Pagina 1: Timbri 1-3 -->
     <div class="passport-page hidden" id="passport-page-1">
-      <img src="immagini/PAGINA_PASSAPORTO.png" alt="" class="passport-page-bg" onerror="this.style.opacity=0.1"/>
-      <div class="passport-stamps-layout">
-        <div class="stamps-col">
-          <div class="stamp-slot" id="pstamp-1"><img src="immagini/TIMBRO_1.png" alt="Timbro 1" class="stamp-img locked"/><span class="stamp-label">Maestro di Cucito</span></div>
-          <div class="stamp-slot" id="pstamp-2"><img src="immagini/TIMBRO_2.png" alt="Timbro 2" class="stamp-img locked"/><span class="stamp-label">Farina e Lievito</span></div>
-          <div class="stamp-slot" id="pstamp-3"><img src="immagini/TIMBRO_3.png" alt="Timbro 3" class="stamp-img locked"/><span class="stamp-label">Insegnante provetto</span></div>
-        </div>
-      </div>
+      <img src="immagini/PAGINA_PASSAPORTO.png" alt="" class="passport-page-bg" onerror="this.style.opacity=0"/>
+      <div class="passport-stamps-layout"><div class="stamps-col">
+        <div class="stamp-slot" id="pstamp-1"><img src="immagini/TIMBRO_1.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Maestro di Cucito</span></div>
+        <div class="stamp-slot" id="pstamp-2"><img src="immagini/TIMBRO_2.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Farina e Lievito</span></div>
+        <div class="stamp-slot" id="pstamp-3"><img src="immagini/TIMBRO_3.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Insegnante provetto</span></div>
+      </div></div>
     </div>
-
-    <!-- Pagina 2: Timbri 4-6 (no timbro manche6) -->
     <div class="passport-page hidden" id="passport-page-2">
-      <img src="immagini/PAGINA_PASSAPORTO.png" alt="" class="passport-page-bg" onerror="this.style.opacity=0.1"/>
-      <div class="passport-stamps-layout">
-        <div class="stamps-col">
-          <div class="stamp-slot" id="pstamp-4"><img src="immagini/TIMBRO_4.png" alt="Timbro 4" class="stamp-img locked"/><span class="stamp-label">Super aiutante</span></div>
-          <div class="stamp-slot" id="pstamp-5"><img src="immagini/TIMBRO_5.png" alt="Timbro 5" class="stamp-img locked"/><span class="stamp-label">Lettore di storie</span></div>
-          <div class="stamp-slot" id="pstamp-7"><img src="immagini/TIMBRO_7.png" alt="Timbro 7" class="stamp-img locked"/><span class="stamp-label">Musicofilo doc</span></div>
-        </div>
-      </div>
+      <img src="immagini/PAGINA_PASSAPORTO.png" alt="" class="passport-page-bg" onerror="this.style.opacity=0"/>
+      <div class="passport-stamps-layout"><div class="stamps-col">
+        <div class="stamp-slot" id="pstamp-4"><img src="immagini/TIMBRO_4.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Super aiutante</span></div>
+        <div class="stamp-slot" id="pstamp-5"><img src="immagini/TIMBRO_5.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Lettore di storie</span></div>
+        <div class="stamp-slot" id="pstamp-7"><img src="immagini/TIMBRO_7.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Musicofilo doc</span></div>
+      </div></div>
     </div>
-
-    <!-- Pagina 3: Timbri 8-10 -->
     <div class="passport-page hidden" id="passport-page-3">
-      <img src="immagini/PAGINA_PASSAPORTO.png" alt="" class="passport-page-bg" onerror="this.style.opacity=0.1"/>
-      <div class="passport-stamps-layout">
-        <div class="stamps-col">
-          <div class="stamp-slot" id="pstamp-8"><img src="immagini/TIMBRO_8.png" alt="Timbro 8" class="stamp-img locked"/><span class="stamp-label">Dottor Giornalaio</span></div>
-          <div class="stamp-slot" id="pstamp-9"><img src="immagini/TIMBRO_9.png" alt="Timbro 9" class="stamp-img locked"/><span class="stamp-label">Mitico Custode</span></div>
-          <div class="stamp-slot" id="pstamp-10"><img src="immagini/TIMBRO_10.png" alt="Timbro 10" class="stamp-img locked"/><span class="stamp-label">Persona dal cuore d'oro</span></div>
-        </div>
-      </div>
+      <img src="immagini/PAGINA_PASSAPORTO.png" alt="" class="passport-page-bg" onerror="this.style.opacity=0"/>
+      <div class="passport-stamps-layout"><div class="stamps-col">
+        <div class="stamp-slot" id="pstamp-8"><img src="immagini/TIMBRO_8.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Dottor Giornalaio</span></div>
+        <div class="stamp-slot" id="pstamp-9"><img src="immagini/TIMBRO_9.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Mitico Custode</span></div>
+        <div class="stamp-slot" id="pstamp-10"><img src="immagini/TIMBRO_10.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Persona dal cuore d'oro</span></div>
+      </div></div>
     </div>
-
-    <!-- Navigazione passaporto -->
     <div class="passport-nav">
-      <button id="passport-prev" class="passport-arrow" aria-label="Pagina precedente">◀</button>
+      <button id="passport-prev" class="passport-arrow">◀</button>
       <span id="passport-page-indicator" class="passport-indicator"></span>
-      <button id="passport-next" class="passport-arrow" aria-label="Pagina successiva">▶</button>
+      <button id="passport-next" class="passport-arrow">▶</button>
     </div>
     <button id="btn-close-passport" class="btn-close-passport">✕ Chiudi</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     SCHERMATA MANCHE (contenuto dinamico)
-═══════════════════════════════════════════════ -->
+<!-- ═══ SCHERMATA MANCHE ═══ -->
 <div id="screen-manche" class="screen hidden screen-manche">
-  <!-- Intro splash della manche -->
   <div id="manche-splash" class="manche-splash hidden">
-    <img id="manche-splash-img" src="" alt="" class="manche-splash-img" />
+    <img id="manche-splash-img" src="" alt="" class="manche-splash-img"/>
   </div>
-
   <div id="manche-content" class="manche-content">
     <h2 id="manche-subtitle" class="manche-subtitle"></h2>
-    <!-- Feedback risposta -->
     <div id="answer-feedback" class="answer-feedback hidden"></div>
-    <!-- Area gioco dinamica -->
     <div id="game-area" class="game-area"></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     OVERLAY FINE GIOCO
-═══════════════════════════════════════════════ -->
+<!-- ═══ OVERLAY FINE GIOCO ═══ -->
 <div id="overlay-end" class="overlay-fullscreen hidden">
   <div class="end-inner">
     <h1 class="end-title">GRAZIE PER AVER GIOCATO</h1>
     <button id="btn-end-passport" class="btn-primary">Apri il Passaporto</button>
-    <button id="btn-collage" class="btn-secondary" style="margin-top:1rem">📷 Foto Ricordo</button>
-    <canvas id="collage-canvas" class="hidden"></canvas>
-    <a id="collage-download" class="hidden btn-primary" download="visitor-passport.png">⬇ Scarica il collage</a>
+    <button id="btn-collage" class="btn-secondary" style="margin-top:1rem">📷 Crea Foto Ricordo</button>
+    <canvas id="collage-canvas" class="hidden" style="margin-top:1rem"></canvas>
+    <a id="collage-download" class="hidden btn-primary" download="visitor-passport.png" style="display:none;margin-top:.75rem">⬇ Scarica il collage</a>
     <div id="end-dissolve" class="hidden end-dissolve">
       <button id="btn-exit" class="btn-exit">ESCI</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     OVERLAY FIORI-PAROLA
-═══════════════════════════════════════════════ -->
+<!-- ═══ OVERLAY FIORI-PAROLA ═══ -->
 <div id="overlay-fioriparola" class="overlay-fullscreen hidden" role="dialog">
   <div class="overlay-inner">
     <button class="btn-close-overlay" id="btn-close-fioriparola">✕</button>
     <h2 class="overlay-title">🌸 FIORI-PAROLA</h2>
-    <p>Hai trovato una lettera segreta lungo il percorso? Aggiungila qui!</p>
-    <div class="fioriparola-display" id="fioriparola-display"></div>
-    <div class="fioriparola-input-row">
-      <input type="text" id="fioriparola-input" maxlength="1" class="fioriparola-input" placeholder="A" />
+    <p>Hai trovato una lettera segreta? Aggiungila qui!</p>
+    <div class="fioriparola-display" id="fioriparola-display">—</div>
+    <div class="fp-input-row">
+      <input type="text" id="fp-input" maxlength="1" class="fp-input" placeholder="A"/>
       <button id="btn-add-letter" class="btn-primary">Aggiungi</button>
     </div>
-    <button id="btn-reset-letters" class="btn-secondary" style="margin-top:.5rem;font-size:.8rem">Cancella tutto</button>
+    <button id="btn-reset-letters" class="btn-secondary" style="margin-top:.75rem;font-size:.8rem">Cancella tutto</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     OVERLAY QR SCANNER
-═══════════════════════════════════════════════ -->
+<!-- ═══ OVERLAY SCANNER ═══ -->
 <div id="overlay-scanner" class="overlay-fullscreen hidden" role="dialog">
   <div class="overlay-inner">
     <button class="btn-close-overlay" id="btn-close-scanner">✕</button>
     <h2 class="overlay-title">📷 Scanner QR</h2>
-    <div id="qr-reader" style="width:100%;max-width:350px;margin:0 auto;"></div>
+    <div id="qr-reader" style="width:100%;max-width:340px;margin:0 auto"></div>
     <p class="scanner-hint">Inquadra il QR Code della postazione</p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     BARRA DI NAVIGAZIONE INFERIORE (fissa)
-═══════════════════════════════════════════════ -->
-<nav id="bottom-nav" class="bottom-nav hidden" aria-label="Navigazione principale">
-  <!-- Fiori-Parola: appare dalla Manche 6 in poi -->
-  <button id="nav-fioriparola" class="nav-btn nav-btn-fioriparola hidden" aria-label="Fiori Parola">
-    🌸<span>FIORI-PAROLA</span>
-  </button>
-  <button id="nav-passport" class="nav-btn nav-btn-passport" aria-label="Passaporto">
-    📖<span>PASSAPORTO</span>
-  </button>
-  <button id="nav-scanner" class="nav-btn nav-btn-scanner" aria-label="Scanner QR">
-    📷<span>SCANNER</span>
-  </button>
+<!-- ═══ BOTTOM NAV ═══ -->
+<nav id="bottom-nav" class="bottom-nav hidden">
+  <button id="nav-fioriparola" class="nav-btn nav-btn-fioriparola hidden">🌸<span>FIORI-PAROLA</span></button>
+  <button id="nav-passport" class="nav-btn">📖<span>PASSAPORTO</span></button>
+  <button id="nav-scanner" class="nav-btn">📷<span>SCANNER</span></button>
 </nav>
 
-<script src="script.js"></script>
+<script>
+/* ══════════════════════════════════════════════════
+   A CASA DI MRS. ROSE BEAR 2.0 – script inline
+══════════════════════════════════════════════════ */
+
+/* ── DATI MANCHE ── */
+const MANCHE = {
+  1:{name:'FIORAIA',color:'#006E00',splash:'immagini/FIORAIA.png',type:'image-quiz',
+    questions:[
+      {img:'immagini/FIORE_1.png',opts:['Papavero','Anemone giapponese','Peonia','Elleboro'],ok:1},
+      {img:'immagini/FIORE_2.png',opts:['Ortensia','Plumbago','Allium','Agapanto'],ok:2},
+      {img:'immagini/FIORE_3.png',opts:['Zinnia','Crisantemo','Gerbera','Dalia'],ok:3},
+      {img:'immagini/FIORE_4.png',opts:['Brugo','Erica','Fabiana imbricata','Veronica'],ok:0}
+    ]},
+  2:{name:'BAKERY',color:'#873324',splash:'immagini/BAKERY.png',type:'quiz',
+    sub:'Scegli la risposta corretta',
+    questions:[
+      {q:'Qual è la funzione principale del lievito madre nella panificazione?',opts:['Aggiungere colore alla crosta','Far lievitare l\'impasto naturalmente e dare sapore','Conservare il pane più a lungo'],ok:1},
+      {q:'Quale tipo di farina è più ricca di fibre e nutrienti?',opts:['Farina 00','Farina integrale (wholemeal)','Farina per dolci'],ok:1},
+      {q:'Quale pane britannico usa bicarbonato di sodio come lievitante?',opts:['Victoria sandwich loaf','Soda bread','Milk bread loaf'],ok:1},
+      {q:'Quale pane è morbido, leggermente dolce e usato per colazioni in stile giapponese?',opts:['Wholemeal loaf','Milk bread loaf','Victoria sandwich loaf'],ok:1}
+    ]},
+  3:{name:'SCUOLA',color:'#24872B',splash:'immagini/SCUOLA.png',type:'quiz',
+    sub:'Completa la frase',
+    questions:[
+      {q:'"_______, uguaglianza, fraternità"',opts:['Libertà','Pace','Amore','Onore'],ok:0},
+      {q:'"La somma degli angoli interni di un _______ è 180°"',opts:['Quadrato','Cerchio','Triangolo','Rettangolo'],ok:2},
+      {q:'"Le piante producono _______ usando luce e CO₂"',opts:['Ossigeno','Zuccheri','Acqua','Clorofilla'],ok:1},
+      {q:'"Don Abbondio cerca di evitare i _______ a tutti i costi"',opts:['Guai','Compiti','Problemi matematici','Viaggi'],ok:0},
+      {q:'"Il _______ più lungo del mondo"',opts:['Mare','Lago','Fiume','Monte'],ok:2},
+      {q:'"Gli _______ si muovono intorno al nucleo dell\'atomo"',opts:['Atomi','Elettroni','Protoni','Neutroni'],ok:1},
+      {q:'"Il _______ è stato un periodo di grande fioritura culturale"',opts:['Rinascimento','Medioevo','Futurismo','Illuminismo'],ok:0},
+      {q:'"La _______ quadrata moltiplicata per se stessa dà quel numero"',opts:['Radice','Somma','Differenza','Potenza'],ok:0}
+    ]},
+  4:{name:'CABINA TELEFONICA',color:'#FF0014',splash:'immagini/CABINA_TELEFONICA.png',type:'matching',
+    intro:'Mrs. Rose è raffreddata e non può uscire.\nAbbina ciascun oggetto al negozio giusto.',
+    pairs:[
+      {obj:'Nastri',ok:'Merceria'},{obj:'Peluche',ok:'Negozio di giocattoli'},
+      {obj:'Buste e francobolli',ok:'Post office'},{obj:'Bottoni',ok:'Merceria'},
+      {obj:'Tazza da tè',ok:'Tea room'},{obj:'Puzzle',ok:'Negozio di giocattoli'},
+      {obj:'Mazzo di rose',ok:'Fioreria'},{obj:'Carta da lettere',ok:'Post office'}
+    ],
+    shops:['Merceria','Negozio di giocattoli','Post office','Tea room','Fioreria']},
+  5:{name:'BOOKCROSSING',color:'#248287',splash:'immagini/BOOKCROSSING.png',type:'bookcrossing'},
+  6:{name:'INGRESSO DEL COTTAGE',color:'#888',splash:'immagini/INGRESSO_COTTAGE.png',type:'alert6',noStamp:true,
+    alertText:'Durante il percorso hai notato qualcosa di insolito? Qualche lettera persa lungo le vie di Little Country! Torna indietro e annotale tutte, chissà… Ti potrebbero servire!'},
+  7:{name:'STANZA RICREATIVA',color:'#1A2AE6',splash:'immagini/STANZA_RICREATIVA.png',type:'music',
+    sub:'Abbina l\'opera al compositore',
+    questions:[
+      {audio:'audio/MUSICA_1.wav',opts:['Wolfgang Amadeus Mozart','Joseph Haydn','Franz Schubert','Anton Bruckner'],ok:0},
+      {audio:'audio/MUSICA_2.wav',opts:['Ludwig van Beethoven','Johann Sebastian Bach','Richard Wagner','Johannes Brahms'],ok:1},
+      {audio:'audio/MUSICA_3.wav',opts:['Giuseppe Verdi','Gioachino Rossini','Antonio Vivaldi','Claudio Monteverdi'],ok:2},
+      {audio:'audio/MUSICA_4.wav',opts:['Rimsky Korsakov','Claude Debussy','Hector Berlioz','Camille Saint-Saëns'],ok:0}
+    ]},
+  8:{name:'SALOTTO',color:'#89C689',splash:'immagini/SALOTTO.png',type:'quiz',
+    sub:'Giornali dal mondo!',
+    questions:[
+      {q:'El Mundo appartiene a:',opts:['UK','Spagna','USA','Francia'],ok:1},
+      {q:'Financial Times appartiene a:',opts:['UK','Spagna','USA','Germania'],ok:0},
+      {q:'The Guardian appartiene a:',opts:['USA','UK','Spagna','Francia'],ok:1},
+      {q:'Vogue appartiene a:',opts:['UK','Francia','USA','Spagna'],ok:2}
+    ]},
+  9:{name:'STANZA DEL CUSTODE',color:'#00A4AC',splash:'immagini/STANZA_CUSTODE.png',type:'quiz',
+    sub:'L\'inventario del castello',
+    questions:[
+      {q:'Quante sedie con stemma araldico sono nella Great Hall?',opts:['10','12','14','16'],ok:1},
+      {q:'Quanti volumi catalogati nella Library?',opts:['400','405','412','420'],ok:2},
+      {q:'Quanti manoscritti miniati nella Library?',opts:['3','5','7','10'],ok:1},
+      {q:'Di che materiale è il tavolo centrale nella Great Hall?',opts:['Rovere','Noce','Quercia','Mogano'],ok:2},
+      {q:'Quanti pezzi compongono il servizio d\'argento nella Dining Hall?',opts:['60','68','72','75'],ok:2},
+      {q:'Quanti ritratti di famiglia catalogati?',opts:['12','14','16','18'],ok:1},
+      {q:'Anno aggiornamento impianto illuminazione nella Great Hall?',opts:['1985','1990','1998','2000'],ok:2},
+      {q:'Quanti pezzi compongono il servizio bicchieri in cristallo molato?',opts:['Non specificato','72','60','50'],ok:0},
+      {q:'Quanti manoscritti miniati in teca climatizzata?',opts:['3','5','7','10'],ok:1},
+      {q:'Dove è conservato il Galateo di Monsignor della Casa?',opts:['Tavolo della Dining Hall','Leggio in rovere nella Library','Scrivania in Master Apartments','Credenza nella Dining Hall'],ok:1}
+    ]},
+  10:{name:'CASTELLO DI LADY ELEONORA',color:'#003EAC',splash:'immagini/CASTELLO.png',type:'frase',
+    intro:`Se stai leggendo queste righe, significa che sei curioso abbastanza da salire fin qui. Bravo. Non tutti hanno il coraggio di ascoltare il silenzio di luoghi dimenticati e di fare scale su scale per poterli raggiungere. Io sono Charlie, il poeta sognatore, costruttore di barche e cercatore di parole alate e questo è il mio diario. Lo consegno a te e alla tua memoria, insieme alla scatola che trovi in valigia.\n\nda Mrs. Rose Bear alla ricerca delle parole perdute`,
+    prompt:'Hai raccolto tutte le lettere sparse per il percorso? Ricomponi la frase aggiungendo gli spazi mancanti.',
+    correctLetters:'ACHIAMALEPAROLLEBELLELLAGENTILEZZAELAMAGIAATE'}
+};
+
+const STAMP_NAMES={1:'Maestro di Cucito',2:'Farina e Lievito',3:'Insegnante provetto',4:'Super aiutante',5:'Lettore di storie',7:'Musicofilo doc',8:'Dottor Giornalaio',9:'Mitico Custode',10:'Persona dal cuore d\'oro'};
+
+/* ── STATO ── */
+const S={
+  nick:'',photo:'',stamps:[],done:[],letters:'',bc:{p:[],l:[]},fp6:false,
+  load(){try{const d=localStorage.getItem('mrb2');if(d)Object.assign(this,JSON.parse(d))}catch(e){}},
+  save(){try{localStorage.setItem('mrb2',JSON.stringify({nick:this.nick,photo:this.photo,stamps:this.stamps,done:this.done,letters:this.letters,bc:this.bc,fp6:this.fp6}))}catch(e){}},
+  hasStamp(n){return this.stamps.includes(+n)},
+  addStamp(n){n=+n;if(!this.stamps.includes(n)){this.stamps.push(n);this.save()}},
+  addDone(n){n=+n;if(!this.done.includes(n)){this.done.push(n);this.save()}}
+};
+
+/* ── AUDIO ── */
+const AC={};
+function playAudio(f,loop=false){
+  try{
+    if(!AC[f])AC[f]=new Audio(f);
+    const a=AC[f];a.loop=loop;a.currentTime=0;
+    a.play().catch(()=>{});return a;
+  }catch(e){return null;}
+}
+function stopAudio(f){try{if(AC[f]){AC[f].pause();AC[f].currentTime=0}}catch(e){}}
+const sfx={
+  passport:()=>playAudio('audio/PASSAPORTO.wav'),
+  stamp:()=>playAudio('audio/TIMBRO.wav'),
+  pagine:()=>playAudio('audio/PAGINE.wav'),
+  giusto:()=>playAudio('audio/GIUSTO.wav'),
+  sbagliato:()=>playAudio('audio/SBAGLIATO.wav'),
+  alert:()=>playAudio('audio/ALERT.wav'),
+  vittoria:()=>playAudio('audio/VITTORIA.wav')
+};
+
+/* ── SHOW/HIDE SCREENS ── */
+function showOnly(id){
+  ['screen-home','screen-manche'].forEach(s=>{
+    const el=document.getElementById(s);
+    if(el) el.classList.toggle('hidden', el.id!==id);
+  });
+  // passaporto e overlay sono gestiti separatamente
+}
+
+/* ══════════════ INIT ══════════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  S.load();
+
+  // Istruzioni all'avvio
+  document.getElementById('btn-close-instructions').onclick=()=>{
+    document.getElementById('overlay-instructions').classList.add('hidden');
+    initHome();
+  };
+
+  // Leggi ?manche=X
+  const params=new URLSearchParams(location.search);
+  const mp=params.get('manche');
+
+  if(mp && S.nick){
+    showOnly('screen-manche');
+    showHeader(); showNav();
+    loadManche(+mp);
+  } else {
+    showOnly('screen-home');
+    if(S.nick){
+      showHeader(); showNav();
+      document.getElementById('home-form').classList.add('hidden');
+      document.getElementById('home-photo-section').classList.add('hidden');
+      document.getElementById('home-passport-btn-wrap').classList.remove('hidden');
+    }
+  }
+  if(S.fp6) document.getElementById('nav-fioriparola').classList.remove('hidden');
+
+  setupHome();
+  setupNav();
+  setupPassport();
+  setupFioriParola();
+  setupScanner();
+  setupEnd();
+  updateHeader();
+});
+
+/* ══════════════ HOME ══════════════ */
+function initHome(){
+  showOnly('screen-home');
+  if(S.nick){
+    showHeader(); showNav();
+    document.getElementById('home-form').classList.add('hidden');
+    document.getElementById('home-photo-section').classList.remove('hidden');
+    document.getElementById('home-passport-btn-wrap').classList.remove('hidden');
+  }
+}
+
+function setupHome(){
+  document.getElementById('btn-play').onclick=()=>{
+    const v=document.getElementById('input-nickname').value.trim();
+    if(!v){document.getElementById('input-nickname').style.borderColor='#f44';return;}
+    S.nick=v;S.save();
+    updateHeader(); showHeader(); showNav();
+    document.getElementById('home-form').classList.add('hidden');
+    document.getElementById('home-photo-section').classList.remove('hidden');
+    document.getElementById('home-passport-btn-wrap').classList.remove('hidden');
+  };
+  document.getElementById('btn-take-photo').onclick=()=>document.getElementById('input-photo').click();
+  document.getElementById('input-photo').onchange=(e)=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      S.photo=ev.target.result;S.save();
+      const img=document.getElementById('header-photo');
+      img.src=S.photo;img.classList.remove('hidden');
+    };
+    r.readAsDataURL(f);
+  };
+  document.getElementById('btn-open-passport-home').onclick=openPassport;
+}
+
+function showHeader(){document.getElementById('app-header').classList.remove('hidden')}
+function showNav(){document.getElementById('bottom-nav').classList.remove('hidden')}
+
+function updateHeader(){
+  document.getElementById('header-nickname').textContent=S.nick||'';
+  if(S.photo){
+    const img=document.getElementById('header-photo');
+    img.src=S.photo;img.classList.remove('hidden');
+  }
+}
+
+/* ══════════════ NAV ══════════════ */
+function setupNav(){
+  document.getElementById('nav-passport').onclick=openPassport;
+  document.getElementById('nav-scanner').onclick=openScanner;
+  document.getElementById('nav-fioriparola').onclick=()=>document.getElementById('overlay-fioriparola').classList.remove('hidden');
+}
+function showFP6btn(){document.getElementById('nav-fioriparola').classList.remove('hidden')}
+
+/* ══════════════ PASSAPORTO ══════════════ */
+let ppPage=0;
+const PP=['passport-cover','passport-page-1','passport-page-2','passport-page-3'];
+
+function openPassport(){
+  if(!S.nick)return;
+  sfx.passport();
+  updatePassport();
+  const ms=S.stamps.length;
+  ppPage = ms===0?0 : ms<=3?1 : ms<=6?2 : 3;
+  renderPP();
+  document.getElementById('screen-passport').classList.remove('hidden');
+}
+
+function updatePassport(){
+  document.getElementById('passport-cover-name').textContent=S.nick;
+  if(S.photo){const i=document.getElementById('passport-photo-img');i.src=S.photo;i.classList.remove('hidden')}
+  [1,2,3,4,5,7,8,9,10].forEach(id=>{
+    const el=document.getElementById('pstamp-'+id);
+    if(!el)return;
+    const img=el.querySelector('.stamp-img');
+    if(!img)return;
+    if(S.hasStamp(id)){img.classList.remove('locked');img.classList.add('earned')}
+    else{img.classList.add('locked');img.classList.remove('earned')}
+  });
+}
+
+function renderPP(){
+  PP.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.toggle('hidden',i!==ppPage);
+  });
+  document.getElementById('passport-page-indicator').textContent=['Copertina','Pagina 1','Pagina 2','Pagina 3'][ppPage]||'';
+}
+
+function setupPassport(){
+  document.getElementById('btn-close-passport').onclick=()=>document.getElementById('screen-passport').classList.add('hidden');
+  document.getElementById('passport-prev').onclick=()=>{if(ppPage>0){ppPage--;sfx.pagine();renderPP()}};
+  document.getElementById('passport-next').onclick=()=>{if(ppPage<3){ppPage++;sfx.pagine();renderPP()}};
+}
+
+/* ══════════════ FIORI-PAROLA ══════════════ */
+function setupFioriParola(){
+  const inp=document.getElementById('fp-input');
+  const disp=document.getElementById('fioriparola-display');
+  const refresh=()=>{disp.textContent=S.letters||'—'};
+  refresh();
+
+  document.getElementById('btn-add-letter').onclick=()=>{
+    const l=inp.value.toUpperCase().replace(/[^A-Z]/g,'').slice(0,1);
+    if(l){S.letters+=l;S.save();refresh();inp.value='';inp.focus()}
+  };
+  inp.addEventListener('input',()=>{inp.value=inp.value.toUpperCase().replace(/[^A-Z]/g,'').slice(0,1)});
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('btn-add-letter').click()});
+  document.getElementById('btn-reset-letters').onclick=()=>{
+    if(confirm('Cancellare tutte le lettere?')){S.letters='';S.save();refresh()}
+  };
+  document.getElementById('btn-close-fioriparola').onclick=()=>document.getElementById('overlay-fioriparola').classList.add('hidden');
+}
+
+/* ══════════════ SCANNER QR ══════════════ */
+let qrScanner=null;
+function openScanner(){
+  document.getElementById('overlay-scanner').classList.remove('hidden');
+  if(qrScanner)return;
+  try{
+    qrScanner=new Html5QrcodeScanner('qr-reader',{fps:10,qrbox:{width:250,height:250}},false);
+    qrScanner.render(decoded=>{
+      let mn=null;
+      try{mn=new URL(decoded).searchParams.get('manche')}
+      catch(e){if(/^\d+$/.test(decoded.trim()))mn=decoded.trim()}
+      if(mn){
+        closeScanner();
+        document.getElementById('overlay-scanner').classList.add('hidden');
+        if(!S.nick){alert('Inserisci prima il tuo nickname!');return}
+        showOnly('screen-manche'); showHeader(); showNav();
+        loadManche(+mn);
+      }
+    },()=>{});
+  }catch(e){console.warn('QR non disponibile')}
+}
+function closeScanner(){
+  if(qrScanner){try{qrScanner.clear()}catch(e){}qrScanner=null;document.getElementById('qr-reader').innerHTML=''}
+}
+function setupScanner(){
+  document.getElementById('btn-close-scanner').onclick=()=>{closeScanner();document.getElementById('overlay-scanner').classList.add('hidden')}
+}
+
+/* ══════════════ CARICA MANCHE ══════════════ */
+function loadManche(n){
+  const d=MANCHE[n];
+  if(!d){document.getElementById('game-area').innerHTML='<p style="text-align:center;padding:40px">Manche non trovata.</p>';return}
+
+  const sub=document.getElementById('manche-subtitle');
+  sub.textContent=`Manche ${n}: ${d.name}`;
+  sub.style.color=d.color;
+  document.getElementById('answer-feedback').classList.add('hidden');
+
+  if(S.done.includes(n)){
+    document.getElementById('game-area').innerHTML=`
+      <div style="text-align:center;padding:40px">
+        <p style="font-size:1.2rem;margin-bottom:16px">✅ Hai già completato questa manche!</p>
+        ${STAMP_NAMES[n]?`<p style="opacity:.7">${STAMP_NAMES[n]}</p>`:''}
+      </div>`;
+    return;
+  }
+
+  // Splash 3 secondi
+  const splash=document.getElementById('manche-splash');
+  document.getElementById('manche-splash-img').src=d.splash||'';
+  splash.classList.remove('hidden');
+  setTimeout(()=>{
+    splash.classList.add('hidden');
+    renderManche(n,d);
+  },3000);
+}
+
+/* ══════════════ RENDER MANCHE ══════════════ */
+function renderManche(n,d){
+  switch(d.type){
+    case 'image-quiz': renderQuiz(n,d,true); break;
+    case 'quiz':       renderQuiz(n,d,false); break;
+    case 'music':      renderMusic(n,d); break;
+    case 'matching':   renderMatching(n,d); break;
+    case 'bookcrossing': renderBookcrossing(n,d); break;
+    case 'alert6':     renderAlert6(n,d); break;
+    case 'frase':      renderFrase(n,d); break;
+    default: document.getElementById('game-area').innerHTML='<p>Tipo non supportato</p>';
+  }
+}
+
+/* ── Quiz (manche 1,2,3,8,9) ── */
+function renderQuiz(n,d,imgMode){
+  const area=document.getElementById('game-area');
+  let qi=0;
+
+  function showQ(){
+    if(qi>=d.questions.length){onComplete(n,d);return}
+    const q=d.questions[qi];
+    area.innerHTML='';
+
+    const wrap=document.createElement('div');
+    wrap.className='quiz-question';
+
+    const prog=document.createElement('p');
+    prog.style.cssText='font-size:.78rem;opacity:.55;margin-bottom:8px;text-align:right';
+    prog.textContent=`${qi+1} / ${d.questions.length}`;
+    wrap.appendChild(prog);
+
+    if(imgMode && q.img){
+      const img=document.createElement('img');
+      img.src=q.img; img.alt='Fiore';
+      img.onerror=()=>img.style.display='none';
+      wrap.appendChild(img);
+    }
+    if(q.q){
+      const qt=document.createElement('p');
+      qt.style.cssText='font-size:1rem;line-height:1.5;margin-bottom:4px';
+      qt.textContent=q.q;
+      wrap.appendChild(qt);
+    }
+    area.appendChild(wrap);
+
+    const opts=document.createElement('div');
+    opts.className='quiz-options';
+    const letters='ABCD';
+    q.opts.forEach((opt,i)=>{
+      const btn=document.createElement('button');
+      btn.className='quiz-option';
+      btn.textContent=(q.q?`${letters[i]}) `:'')+opt;
+      btn.onclick=()=>{
+        opts.querySelectorAll('.quiz-option').forEach(b=>b.disabled=true);
+        if(i===q.ok){
+          btn.classList.add('correct');
+          sfx.giusto();
+          showFeedback('CORRETTO ✓',true);
+          setTimeout(()=>{hideFeedback();qi++;showQ()},2000);
+        } else {
+          btn.classList.add('wrong');
+          sfx.sbagliato();
+          showFeedback('Sbagliato! Ritenta',false);
+          setTimeout(()=>{
+            hideFeedback();
+            btn.disabled=true;
+            opts.querySelectorAll('.quiz-option').forEach(b=>{if(!b.classList.contains('wrong'))b.disabled=false});
+          },1500);
+        }
+      };
+      opts.appendChild(btn);
+    });
+    area.appendChild(opts);
+  }
+  showQ();
+}
+
+/* ── Manche 7 – Musica ── */
+function renderMusic(n,d){
+  const area=document.getElementById('game-area');
+  let qi=0;
+  let curAudio=null;
+
+  function showQ(){
+    if(qi>=d.questions.length){onComplete(n,d);return}
+    const q=d.questions[qi];
+    area.innerHTML='';
+
+    if(curAudio){curAudio.pause();curAudio.currentTime=0}
+    curAudio=new Audio(q.audio);
+    curAudio.loop=true;
+    curAudio.play().catch(()=>{});
+
+    const player=document.createElement('div');
+    player.className='music-player-area';
+    const pb=document.createElement('button');
+    pb.className='music-play-btn'; pb.textContent='⏸';
+    pb.onclick=()=>{
+      if(curAudio.paused){curAudio.play().catch(()=>{});pb.textContent='⏸'}
+      else{curAudio.pause();pb.textContent='▶'}
+    };
+    const hint=document.createElement('p');
+    hint.className='music-hint'; hint.textContent='Ascolta e scegli il compositore';
+    player.appendChild(pb); player.appendChild(hint);
+
+    const prog=document.createElement('p');
+    prog.style.cssText='font-size:.78rem;opacity:.55;margin-bottom:8px;text-align:right;margin-top:8px';
+    prog.textContent=`${qi+1} / ${d.questions.length}`;
+
+    const opts=document.createElement('div');
+    opts.className='quiz-options';
+    const letters='ABCD';
+    q.opts.forEach((opt,i)=>{
+      const btn=document.createElement('button');
+      btn.className='quiz-option';
+      btn.textContent=`${letters[i]}) ${opt}`;
+      btn.onclick=()=>{
+        opts.querySelectorAll('.quiz-option').forEach(b=>b.disabled=true);
+        curAudio.pause();
+        if(i===q.ok){
+          btn.classList.add('correct');
+          sfx.giusto();
+          showFeedback('CORRETTO ✓',true);
+          setTimeout(()=>{hideFeedback();qi++;showQ()},2000);
+        } else {
+          btn.classList.add('wrong');
+          sfx.sbagliato();
+          curAudio.play().catch(()=>{});
+          showFeedback('Sbagliato! Ritenta',false);
+          setTimeout(()=>{
+            hideFeedback();
+            btn.disabled=true;
+            opts.querySelectorAll('.quiz-option').forEach(b=>{if(!b.classList.contains('wrong'))b.disabled=false});
+          },1500);
+        }
+      };
+      opts.appendChild(btn);
+    });
+
+    area.appendChild(player);
+    area.appendChild(prog);
+    area.appendChild(opts);
+  }
+  showQ();
+}
+
+/* ── Manche 4 – Matching ── */
+function renderMatching(n,d){
+  const area=document.getElementById('game-area');
+  let html=`<p class="match-intro">${d.intro.replace(/\n/g,'<br>')}</p><div class="match-game">`;
+  d.pairs.forEach((p,i)=>{
+    const opts=d.shops.map(s=>`<option value="${s}">${s}</option>`).join('');
+    html+=`<div class="match-item" id="mi-${i}"><span class="match-object-label">${p.obj}</span><select class="match-select" id="ms-${i}"><option value="">Scegli…</option>${opts}</select></div>`;
+  });
+  html+=`</div><button class="match-check-btn" id="btn-check-match">Verifica abbinamenti</button>`;
+  area.innerHTML=html;
+
+  document.getElementById('btn-check-match').onclick=()=>{
+    let allOk=true, anyEmpty=false;
+    d.pairs.forEach((p,i)=>{
+      const sel=document.getElementById(`ms-${i}`);
+      const item=document.getElementById(`mi-${i}`);
+      if(!sel.value){anyEmpty=true;return}
+      item.classList.remove('correct-match','wrong-match');
+      if(sel.value===p.ok){item.classList.add('correct-match');sel.disabled=true}
+      else{item.classList.add('wrong-match');allOk=false;sel.value=''}
+    });
+    if(anyEmpty){showFeedback('Completa tutti gli abbinamenti!',false);sfx.sbagliato();return}
+    if(allOk){
+      sfx.giusto();showFeedback('CORRETTO! Tutti gli abbinamenti sono giusti ✓',true);
+      setTimeout(()=>onComplete(n,d),2200);
+    } else {
+      sfx.sbagliato();showFeedback('Alcuni abbinamenti sono sbagliati! Ritenta',false);
+      setTimeout(hideFeedback,2000);
+    }
+  };
+}
+
+/* ── Manche 5 – Bookcrossing ── */
+function renderBookcrossing(n,d){
+  const area=document.getElementById('game-area');
+  area.innerHTML=`
+    <div class="bookcrossing-container">
+      <div class="bookshelf"><h3>📚 Cosa prendo</h3><div class="bookshelf-list" id="list-p"></div></div>
+      <div class="bookshelf"><h3>📖 Cosa lascio</h3><div class="bookshelf-list" id="list-l"></div></div>
+    </div>
+    <div class="bc-input-row">
+      <input type="text" id="bc-title" placeholder="Titolo del libro…" maxlength="80"/>
+      <select class="bc-shelf-sel" id="bc-shelf"><option value="p">Prendo</option><option value="l">Lascio</option></select>
+      <button class="bc-add-btn" id="bc-add">+ Aggiungi</button>
+    </div>
+    <button class="btn-primary" id="bc-done" style="margin-top:16px;width:100%">Ho finito ✓</button>`;
+
+  const refresh=()=>{
+    document.getElementById('list-p').innerHTML=S.bc.p.map(t=>`<div class="book-entry">📗 ${t}</div>`).join('');
+    document.getElementById('list-l').innerHTML=S.bc.l.map(t=>`<div class="book-entry">📕 ${t}</div>`).join('');
+  };
+  refresh();
+
+  document.getElementById('bc-add').onclick=()=>{
+    const t=document.getElementById('bc-title').value.trim();
+    const sh=document.getElementById('bc-shelf').value;
+    if(!t)return;
+    S.bc[sh].push(t);S.save();
+    document.getElementById('bc-title').value='';
+    refresh();
+    showFeedback('Libro aggiunto! 📚',true);
+    setTimeout(hideFeedback,1500);
+  };
+  document.getElementById('bc-done').onclick=()=>{sfx.giusto();onComplete(n,d)};
+}
+
+/* ── Manche 6 – Alert ── */
+function renderAlert6(n,d){
+  sfx.alert();
+  const el=document.createElement('div');
+  el.className='m6-alert';
+  el.innerHTML=`<div class="m6-alert-inner"><p class="m6-alert-text">${d.alertText}</p><button class="m6-ok-btn">Ho capito!</button></div>`;
+  document.body.appendChild(el);
+  el.querySelector('button').onclick=()=>{
+    el.remove();
+    S.fp6=true; S.addDone(6); S.save();
+    showFP6btn();
+    document.getElementById('game-area').innerHTML=`
+      <div style="text-align:center;padding:40px">
+        <p style="font-size:1.1rem;margin-bottom:12px">🌸 Il pulsante FIORI-PAROLA è ora attivo!</p>
+        <p style="opacity:.7;font-size:.9rem">Usa il pulsante in basso per annotare le lettere lungo il percorso.</p>
+      </div>`;
+  };
+}
+
+/* ── Manche 10 – Frase ── */
+function renderFrase(n,d){
+  const area=document.getElementById('game-area');
+  const letters=S.letters||'';
+  area.innerHTML=`
+    <div class="frase-intro-text">${d.intro.replace(/\n/g,'<br>')}</div>
+    <p style="margin-bottom:12px;opacity:.85;font-size:.9rem">${d.prompt}</p>
+    <div class="frase-display">${letters||'(nessuna lettera raccolta)'}</div>
+    <p style="font-size:.8rem;opacity:.55;margin-bottom:10px">Aggiungi gli spazi per formare la frase corretta:</p>
+    <div class="frase-input-row">
+      <input type="text" class="frase-input" id="frase-input" placeholder="A CHI AMA LE PAROLE BELLE…" value="${letters}" style="text-transform:uppercase"/>
+    </div>
+    <button class="frase-invia-btn" id="btn-invia">INVIA</button>`;
+
+  document.getElementById('frase-input').oninput=e=>{e.target.value=e.target.value.toUpperCase()};
+
+  document.getElementById('btn-invia').onclick=()=>{
+    const val=document.getElementById('frase-input').value.toUpperCase();
+    const stripped=val.replace(/[^A-Z]/g,'');
+    // Confronto flessibile: solo lettere
+    const target=d.correctLetters.replace(/[^A-Z]/g,'');
+    if(stripped===target||stripped===target.slice(0,-3)){
+      sfx.vittoria();
+      showFeedback('🎉 VITTORIA! La frase è corretta!',true);
+      setTimeout(()=>onComplete(n,d),2500);
+    } else {
+      sfx.sbagliato();
+      showFeedback('Sbagliato! Riprova con gli spazi giusti',false);
+      setTimeout(hideFeedback,2500);
+    }
+  };
+}
+
+/* ── Completamento manche ── */
+function onComplete(n,d){
+  S.addDone(n);
+  if(!d.noStamp && STAMP_NAMES[n]){
+    S.addStamp(n);
+    sfx.stamp();
+    const t=document.createElement('div');
+    t.className='timbro-toast';
+    t.innerHTML=`🏅 Timbro: <strong>${STAMP_NAMES[n]}</strong>`;
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(),3500);
+  }
+  if(n===10){setTimeout(showEndGame,3000);return}
+  document.getElementById('game-area').innerHTML=`
+    <div style="text-align:center;padding:40px;animation:feedbackPop .4s ease">
+      <p style="font-size:1.2rem;font-weight:bold;margin-bottom:10px">🎉 Manche completata!</p>
+      <p style="opacity:.7;font-size:.9rem">Torna all'esposizione per la prossima tappa!</p>
+      <button class="btn-secondary" style="margin-top:16px" onclick="openPassport()">Vedi il tuo Passaporto</button>
+    </div>`;
+}
+
+/* ── Feedback ── */
+function showFeedback(msg,ok){
+  const fb=document.getElementById('answer-feedback');
+  fb.textContent=msg;
+  fb.className='answer-feedback '+(ok?'feedback-correct':'feedback-wrong');
+  fb.classList.remove('hidden');
+}
+function hideFeedback(){document.getElementById('answer-feedback').classList.add('hidden')}
+
+/* ══════════════ FINE GIOCO ══════════════ */
+function showEndGame(){
+  showOnly('screen-home');
+  document.getElementById('screen-home').classList.add('hidden');
+  document.getElementById('overlay-end').classList.remove('hidden');
+}
+
+function setupEnd(){
+  document.getElementById('btn-end-passport').onclick=()=>{
+    document.getElementById('overlay-end').classList.add('hidden');
+    updatePassport(); ppPage=0; renderPP();
+    document.getElementById('screen-passport').classList.remove('hidden');
+  };
+  document.getElementById('btn-collage').onclick=generateCollage;
+  document.getElementById('btn-exit').onclick=()=>{
+    document.body.style.transition='opacity 1.5s';
+    document.body.style.opacity='0';
+    setTimeout(()=>{document.body.innerHTML=''},1600);
+  };
+}
+
+async function generateCollage(){
+  const canvas=document.getElementById('collage-canvas');
+  const ctx=canvas.getContext('2d');
+  const W=800,H=1000;
+  canvas.width=W; canvas.height=H;
+
+  ctx.fillStyle='#19495F';
+  ctx.fillRect(0,0,W,H);
+
+  const loadImg=src=>new Promise(res=>{
+    const i=new Image(); i.crossOrigin='anonymous';
+    i.onload=()=>res(i); i.onerror=()=>res(null);
+    i.src=src;
+  });
+
+  // Copertina
+  const cov=await loadImg('immagini/COPERTINA.png');
+  if(cov){ctx.globalAlpha=.7;ctx.drawImage(cov,20,20,370,240);ctx.globalAlpha=1}
+
+  // Foto visitatore
+  if(S.photo){
+    const ph=await loadImg(S.photo);
+    if(ph){ctx.save();ctx.beginPath();ctx.roundRect(30,30,90,110,6);ctx.clip();ctx.drawImage(ph,30,30,90,110);ctx.restore()}
+  }
+
+  // Nickname
+  ctx.fillStyle='#fff'; ctx.font='bold 18px Georgia'; ctx.textAlign='center';
+  ctx.fillText(S.nick,200,240);
+  ctx.font='13px Georgia'; ctx.fillStyle='rgba(255,255,255,.7)';
+  ctx.fillText('Il Visitor Passport di',200,220);
+
+  // Pagine timbri
+  const pageBg=await loadImg('immagini/PAGINA_PASSAPORTO.png');
+  const pages=[{x:410,y:20},{x:20,y:280},{x:410,y:280}];
+  const groups=[[1,2,3],[4,5,7],[8,9,10]];
+  for(let p=0;p<3;p++){
+    const{x,y}=pages[p];
+    if(pageBg){ctx.globalAlpha=.25;ctx.drawImage(pageBg,x,y,370,220);ctx.globalAlpha=1}
+    for(let s=0;s<groups[p].length;s++){
+      const sid=groups[p][s];
+      const si=await loadImg(`immagini/TIMBRO_${sid}.png`);
+      if(si){
+        ctx.globalAlpha=S.hasStamp(sid)?1:.2;
+        if(!S.hasStamp(sid)){ctx.filter='grayscale(100%)'}
+        ctx.drawImage(si,x+10,y+10+s*68,56,56);
+        ctx.globalAlpha=1; ctx.filter='none';
+      }
+      ctx.fillStyle='#fff'; ctx.font='13px Georgia'; ctx.textAlign='left';
+      ctx.fillText(STAMP_NAMES[sid]||'',x+74,y+46+s*68);
+    }
+  }
+
+  // Watermark
+  ctx.fillStyle='rgba(255,255,255,.55)';
+  ctx.font='12px Georgia'; ctx.textAlign='right';
+  ctx.fillText('A casa di Mrs. Rose Bear 2.0',W-14,H-12);
+
+  canvas.classList.remove('hidden');
+  const link=document.getElementById('collage-download');
+  link.href=canvas.toDataURL('image/png');
+  link.style.display='inline-block';
+  link.classList.remove('hidden');
+  link.onclick=()=>setTimeout(()=>document.getElementById('end-dissolve').classList.remove('hidden'),1000);
+}
+</script>
 </body>
 </html>
