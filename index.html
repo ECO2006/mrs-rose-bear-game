@@ -513,8 +513,16 @@ function showOnly(id){
 document.addEventListener('DOMContentLoaded',()=>{
   S.load();
 
-  // Leggi ?manche=X
+  // ── RESET: apri ?reset=1 per azzerare tutto tra un visitatore e l'altro ──
   const params=new URLSearchParams(location.search);
+  if(params.get('reset')==='1'){
+    localStorage.removeItem('mrb2');
+    // Ricarica senza il parametro reset
+    window.location.href=window.location.pathname;
+    return;
+  }
+
+  // Leggi ?manche=X
   const mp=params.get('manche');
 
   // Istruzioni: mostra solo al primo avvio assoluto (senza nickname)
@@ -537,7 +545,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     // Link diretto a manche con nickname già salvato
     showOnly('screen-manche');
     showHeader(); showNav();
-    loadManche(+mp);
   } else if(mp && !S.nick){
     // Link a manche ma senza nickname: va alla home per registrarsi
     showOnly('screen-home');
@@ -560,6 +567,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   setupScanner();
   setupEnd();
   updateHeader();
+
+  // Carica manche DOPO tutti i setup
+  if(mp && S.nick){
+    loadManche(+mp);
+  }
 });
 
 /* ══════════════ HOME ══════════════ */
