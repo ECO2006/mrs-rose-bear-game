@@ -18,7 +18,7 @@ function showHomePage() {
     container.innerHTML = "";
     const bg = createElement("div", {class:"home-bg"});
     const title = createElement("h1", {innerHTML:"A casa di Mrs. Rose Bear 2.0", class:"title"});
-    const roseImg = createElement("img", {src:"immagini/ROSE.png", class:"rose-img"});
+    const roseImg = createElement("img", {src:"IMMAGINI/ROSE.png", class:"rose-img"});
     const instructions = createElement("div", {class:"instructions", innerHTML:`
         Benvenuto al gioco interattivo della mostra ‘A casa di Mrs. Rose Bear 2.0’, il Visitor Passport!<br>
         Rispondi correttamente alle domande per guadagnare il timbro e completare il tuo Passaporto da visitatore di Little Country.<br>
@@ -248,3 +248,4 @@ function renderFraseFinale(m){
 // Avvio
 
 showHomePage();
+
