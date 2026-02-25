@@ -149,7 +149,8 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 
 /* ═══ MANCHE ═══ */
 .screen-manche{background:var(--bg);padding-top:calc(var(--hh)+16px);padding-bottom:calc(var(--nh)+16px);min-height:100vh;position:relative}
-.manche-splash{position:fixed;inset:0;background:var(--bg);z-index:800;display:flex!important;align-items:center;justify-content:center;animation:fadeIn .4s ease}
+.manche-splash{position:fixed;inset:0;background:var(--bg);z-index:800;display:none;align-items:center;justify-content:center;animation:fadeIn .4s ease}
+.manche-splash.visible{display:flex}
 .manche-splash-img{max-width:min(90vw,440px);max-height:70vh;object-fit:contain;filter:drop-shadow(0 8px 32px rgba(0,0,0,.5))}
 .manche-content{padding:16px 20px;max-width:560px;margin:0 auto}
 .manche-subtitle{font-family:var(--font-manche);font-size:clamp(1.1rem,4vw,1.5rem);font-weight:bold;text-align:center;margin-bottom:20px;line-height:1.3}
@@ -330,7 +331,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 
 <!-- ═══ SCHERMATA MANCHE ═══ -->
 <div id="screen-manche" class="screen hidden screen-manche">
-  <div id="manche-splash" class="manche-splash hidden">
+  <div id="manche-splash" class="manche-splash">
     <img id="manche-splash-img" src="" alt="" class="manche-splash-img"/>
   </div>
   <div id="manche-content" class="manche-content">
@@ -739,9 +740,9 @@ function loadManche(n){
   // Splash 3 secondi
   const splash=document.getElementById('manche-splash');
   document.getElementById('manche-splash-img').src=d.splash||'';
-  splash.classList.remove('hidden');
+  splash.classList.add('visible');
   setTimeout(()=>{
-    splash.classList.add('hidden');
+    splash.classList.remove('visible');
     renderManche(n,d);
   },3000);
 }
