@@ -181,7 +181,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .match-object-label{flex:0 0 130px;font-weight:bold;font-size:.9rem}
 .match-select{flex:1;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;color:var(--white);padding:8px 10px;font-family:var(--font-body);font-size:.9rem;outline:none;min-width:150px}
 .match-select option{background:#19495F;color:white}
-.match-check-btn{display:block;margin:18px auto 0;background:var(--white);color:var(--bg);border:none;border-radius:var(--r);padding:12px 28px;font-size:1rem;font-weight:bold;cursor:pointer}
+.match-check-btn{display:block;margin:18px auto 0;background:var(--white);color:var(--bg);border:none;border-radius:var(--r);padding:12px 28px;font-size:1rem;font-weight:bold;cursor:pointer;margin-bottom:calc(var(--nh) + 20px)}
 .match-item.correct-match{border:2px solid #00e000}
 .match-item.wrong-match{border:2px solid #ff4040}
 
@@ -475,7 +475,7 @@ const MANCHE = {
   10:{name:'CASTELLO DI LADY ELEONORA',color:'#003EAC',splash:'immagini/CASTELLO.png',type:'frase',
     intro:`Se stai leggendo queste righe, significa che sei curioso abbastanza da salire fin qui. Bravo. Non tutti hanno il coraggio di ascoltare il silenzio di luoghi dimenticati e di fare scale su scale per poterli raggiungere. Io sono Charlie, il poeta sognatore, costruttore di barche e cercatore di parole alate e questo è il mio diario. Lo consegno a te e alla tua memoria, insieme alla scatola che trovi in valigia.\n\nda Mrs. Rose Bear alla ricerca delle parole perdute`,
     prompt:'Hai raccolto tutte le lettere sparse per il percorso? Ricomponi la frase aggiungendo gli spazi mancanti.',
-    correctLetters:'ACHIAMALEPAROLLEBELLELLAGENTILEZZAELAMAGIAATE'}
+    correctLetters:'ACHIAMALEPAROLEBELLELAGENTILEZZAELAMAGIAATE'}
 };
 
 const STAMP_NAMES={1:'Amante dei fiori',2:'Farina e Lievito',3:'Insegnante provetto',4:'Super aiutante',5:'Lettore di storie',7:'Musicofilo doc',8:'Dottor Giornalaio',9:'Mitico Custode',10:'Persona dal cuore d\'oro'};
@@ -1001,7 +1001,8 @@ function renderAlert6(n,d){
     document.getElementById('game-area').innerHTML=`
       <div style="text-align:center;padding:40px">
         <p style="font-size:1.1rem;margin-bottom:12px">🌸 Il pulsante FIORI-PAROLA è ora attivo!</p>
-        <p style="opacity:.7;font-size:.9rem">Usa il pulsante in basso per annotare le lettere lungo il percorso.</p>
+        <p style="opacity:.7;font-size:.9rem;margin-bottom:24px">Usa il pulsante in basso per annotare le lettere lungo il percorso.</p>
+        <button class="btn-secondary" style="width:100%;max-width:280px" onclick="goHome()">🏠 Torna alla Home</button>
       </div>`;
   };
 }
@@ -1010,30 +1011,35 @@ function renderAlert6(n,d){
 function renderFrase(n,d){
   const area=document.getElementById('game-area');
   const letters=S.letters||'';
+
   area.innerHTML=`
     <div class="frase-intro-text">${d.intro.replace(/\n/g,'<br>')}</div>
-    <p style="margin-bottom:12px;opacity:.85;font-size:.9rem">${d.prompt}</p>
-    <div class="frase-display">${letters||'(nessuna lettera raccolta)'}</div>
-    <p style="font-size:.8rem;opacity:.55;margin-bottom:10px">Aggiungi gli spazi per formare la frase corretta:</p>
-    <div class="frase-input-row">
-      <input type="text" class="frase-input" id="frase-input" placeholder="A CHI AMA LE PAROLE BELLE…" value="${letters}" style="text-transform:uppercase"/>
+    <p style="margin-bottom:8px;opacity:.9;font-size:.95rem">${d.prompt}</p>
+    <div style="background:rgba(255,255,0,.12);border:1.5px solid rgba(255,255,0,.35);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.85rem;line-height:1.5">
+      ⚠️ <strong>Attenzione:</strong> inserisci la frase <strong>senza punteggiatura</strong> (niente virgole o punti), solo lettere e spazi.
     </div>
-    <button class="frase-invia-btn" id="btn-invia">INVIA</button>`;
+    <p style="font-size:.82rem;opacity:.6;margin-bottom:6px">Lettere raccolte:</p>
+    <div class="frase-display" id="frase-lettere">${letters||'—'}</div>
+    <p style="font-size:.82rem;opacity:.6;margin-bottom:6px;margin-top:12px">Riscrivi qui la frase con gli spazi:</p>
+    <textarea id="frase-input"
+      style="width:100%;min-height:90px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:10px;color:#fff;padding:12px 14px;font-size:1rem;font-family:Arial,sans-serif;resize:vertical;outline:none;text-transform:uppercase;line-height:1.6"></textarea>
+    <button class="frase-invia-btn" id="btn-invia" style="margin-top:12px;width:100%">INVIA</button>`;
 
-  document.getElementById('frase-input').oninput=e=>{e.target.value=e.target.value.toUpperCase()};
+  const ta=document.getElementById('frase-input');
+  ta.addEventListener('input',()=>{ ta.value=ta.value.toUpperCase().replace(/[^A-Z\s]/g,''); });
 
   document.getElementById('btn-invia').onclick=()=>{
-    const val=document.getElementById('frase-input').value.toUpperCase();
-    const stripped=val.replace(/[^A-Z]/g,'');
-    // Confronto flessibile: solo lettere
-    const target=d.correctLetters.replace(/[^A-Z]/g,'');
-    if(stripped===target||stripped===target.slice(0,-3)){
+    const val=ta.value.toUpperCase().replace(/[^A-Z\s]/g,'').trim();
+    // Normalizza: rimuovi spazi multipli, confronta solo lettere
+    const stripped=val.replace(/\s+/g,'');
+    const target='ACHIAMALEPAROLEBELLELAGENTILEZZAELAMAGIAATE';
+    if(stripped===target){
       sfx.vittoria();
       showFeedback('🎉 VITTORIA! La frase è corretta!',true);
       setTimeout(()=>onComplete(n,d),2500);
     } else {
       sfx.sbagliato();
-      showFeedback('Sbagliato! Riprova con gli spazi giusti',false);
+      showFeedback('Non è ancora corretta… riprova aggiungendo gli spazi giusti!',false);
       setTimeout(hideFeedback,2500);
     }
   };
@@ -1054,13 +1060,13 @@ function onComplete(n,d){
   if(n===10){setTimeout(showEndGame,3000);return}
 
   const stampImg = STAMP_NAMES[n] ? `<img src="immagini/TIMBRO_${n}.png" style="width:70px;height:70px;object-fit:contain;flex-shrink:0" onerror="this.style.display='none'"/>` : '';
-  const stampLabel = STAMP_NAMES[n] ? `<span style="font-family:var(--font-title);font-size:1.1rem;color:#fff">${STAMP_NAMES[n]}</span>` : '';
+  const stampLabel = STAMP_NAMES[n] ? `<span style="font-family:var(--font-title);font-size:1.1rem;color:#19495F;font-weight:bold">${STAMP_NAMES[n]}</span>` : '';
 
   document.getElementById('game-area').innerHTML=`
     <div style="text-align:center;padding:32px 20px;animation:feedbackPop .4s ease">
       <p style="font-size:1.3rem;font-weight:bold;margin-bottom:20px">🎉 Manche completata!</p>
       ${STAMP_NAMES[n] ? `
-      <div style="display:flex;align-items:center;justify-content:center;gap:14px;background:rgba(255,255,255,.1);border-radius:14px;padding:16px 20px;margin-bottom:24px">
+      <div style="display:flex;align-items:center;justify-content:center;gap:14px;background:#ffffff;border-radius:14px;padding:16px 20px;margin-bottom:24px;box-shadow:0 4px 16px rgba(0,0,0,.2)">
         ${stampImg}
         ${stampLabel}
       </div>` : ''}
