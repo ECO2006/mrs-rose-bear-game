@@ -1,149 +1,222 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<title>A casa di Mrs. Rose Bear 2.0</title>
-<link rel="stylesheet" href="style.css">
-<script>
-let nickname = "";
-let fotoData = "";
-let timbri = [];
-let lettereRaccolte = "";
-let fraseCorretta = "A CHI AMA LE PAROLE BELLE, LA GENTILEZZA E LA MAGIA. A TE";
-let paginaPassaporto = 0;
-let mancheAttuale = 0;
-
-// Suoni
-const suoni = {
-  passaporto: new Audio('suoni/PASSAPORTO.wav'),
-  giusto: new Audio('suoni/GIUSTO.wav'),
-  sbagliato: new Audio('suoni/SBAGLIATO.wav'),
-  timbro: new Audio('suoni/TIMBRO.wav'),
-  pagina: new Audio('suoni/PAGINE.wav'),
-  alert: new Audio('suoni/ALERT.wav'),
-  vittoria: new Audio('suoni/VITTORIA.wav')
-};
-
-// Liste delle manche
-const manche = [
-  {
-    nome: "FIORAIA",
-    colore: "#006E00",
-    tipo: "match",
-    domande: [
-      {immagine:"immagini/FIORE_1.png", opzioni:["Papavero","Anemone giapponese","Peonia","Elleboro"], risposta:"Anemone giapponese"},
-      {immagine:"immagini/FIORE_2.png", opzioni:["Ortensia","Plumbago","Allium","Agapanto"], risposta:"Allium"},
-      {immagine:"immagini/FIORE_3.png", opzioni:["Zinnia","Crisantemo","Gerbera","Dalia"], risposta:"Dalia"},
-      {immagine:"immagini/FIORE_4.png", opzioni:["Brugo","Erica","Fabiana imbricata","Veronica"], risposta:"Brugo"}
-    ]
-  },
-  {
-    nome: "BAKERY",
-    colore: "#873324",
-    tipo: "quiz",
-    domande: [
-      {testo:"Qual è la funzione principale del lievito madre nella panificazione?", opzioni:["Aggiungere colore alla crosta","Far lievitare l’impasto naturalmente e dare sapore","Conservare il pane più a lungo"], risposta:1},
-      {testo:"Quale tipo di farina è più ricca di fibre e nutrienti rispetto alla farina bianca?", opzioni:["Farina 00","Farina integrale (wholemeal)","Farina per dolci"], risposta:1},
-      {testo:"Quale pane britannico è preparato senza lievito, usando bicarbonato di sodio come agente lievitante?", opzioni:["Victoria sandwich loaf","Soda bread","Milk bread loaf"], risposta:1},
-      {testo:"Quale tipo di pane è noto per essere morbido, leggermente dolce e spesso usato per colazioni o toast in stile giapponese?", opzioni:["Wholemeal loaf","Milk bread loaf","Victoria sandwich loaf"], risposta:1}
-    ]
-  },
-  {
-    nome: "SCUOLA",
-    colore: "#24872B",
-    tipo: "quiz",
-    domande: [
-      {testo:"“_______, uguaglianza, fraternità”", opzioni:["Libertà","Pace","Amore","Onore"], risposta:0},
-      {testo:"La somma degli angoli interni di un _______ è 180°", opzioni:["Quadrato","Cerchio","Triangolo","Rettangolo"], risposta:2},
-      {testo:"Il processo con cui le piante producono _______ usando luce e CO₂", opzioni:["Ossigeno","Zuccheri","Acqua","Clorofilla"], risposta:1},
-      {testo:"Nel romanzo I Promessi Sposi, Don Abbondio cerca di evitare i _______ a tutti i costi", opzioni:["Guai","Compiti","Problemi matematici","Viaggi"], risposta:0},
-      {testo:"Il _______ più lungo del mondo", opzioni:["Mare","Lago","Fiume","Monte"], risposta:2},
-      {testo:"Gli _______ si muovono intorno al nucleo dell’atomo in orbite definite", opzioni:["Atomi","Elettroni","Protoni","Neutroni"], risposta:1},
-      {testo:"Il _______ è stato un periodo di grande fioritura culturale e artistica", opzioni:["Rinascimento","Medioevo","Futurismo","Illuminismo"], risposta:0},
-      {testo:"La _______ quadrata di un numero è il valore che moltiplicato per se stesso dà quel numero", opzioni:["Radice","Somma","Differenza","Potenza"], risposta:0}
-    ]
-  },
-  {
-    nome: "CABINA TELEFONICA",
-    colore: "#FF0014",
-    tipo: "match",
-    domande: [
-      {oggetto:"Nastri", negozio:"Merceria"},
-      {oggetto:"Peluche", negozio:"Negozio di giocattoli"},
-      {oggetto:"Buste e francobolli", negozio:"Post office"},
-      {oggetto:"Bottoni", negozio:"Merceria"},
-      {oggetto:"Tazza da tè", negozio:"Tea room"},
-      {oggetto:"Puzzle", negozio:"Negozio di giocattoli"},
-      {oggetto:"Mazzo di rose", negozio:"Fioreria"},
-      {oggetto:"Carta da lettere", negozio:"Post office"}
-    ]
-  },
-  {
-    nome: "BOOKCROSSING",
-    colore: "#248287",
-    tipo: "virtual",
-    domande: [] // sarà gestito come gioco interattivo con due scaffali
-  },
-  {
-    nome: "INGRESSO DEL COTTAGE",
-    colore: "#000000",
-    tipo: "lettere",
-    testo:"Durante il percorso hai notato qualcosa di insolito? Qualche lettera persa lungo le vie di Little Country! Torna indietro e annotale tutte, chissà… Ti potrebbero servire!"
-  },
-  {
-    nome: "STANZA RICREATIVA",
-    colore: "#1A2AE6",
-    tipo: "musica",
-    domande: [
-      {audio:"immagini/MUSICA_1.wav", opzioni:["Wolfgang Amadeus Mozart","Joseph Haydn","Franz Schubert","Anton Bruckner"], risposta:0},
-      {audio:"immagini/MUSICA_2.wav", opzioni:["Ludwig van Beethoven","Johann Sebastian Bach","Richard Wagner","Johannes Brahms"], risposta:1},
-      {audio:"immagini/MUSICA_3.wav", opzioni:["Giuseppe Verdi","Gioachino Rossini","Antonio Vivaldi","Claudio Monteverdi"], risposta:2},
-      {audio:"immagini/MUSICA_4.wav", opzioni:["Rimsky Korsakov","Claude Debussy","Hector Berlioz","Camille Saint-Saëns"], risposta:0}
-    ]
-  },
-  {
-    nome: "SALOTTO",
-    colore: "#89C689",
-    tipo: "quiz",
-    domande: [
-      {testo:"El Mundo appartiene a:", opzioni:["UK","Spagna","USA","Francia"], risposta:1},
-      {testo:"Financial Times appartiene a:", opzioni:["UK","Spagna","USA","Germania"], risposta:0},
-      {testo:"The Guardian appartiene a:", opzioni:["USA","UK","Spagna","Francia"], risposta:1},
-      {testo:"Vogue appartiene a:", opzioni:["UK","Francia","USA","Spagna"], risposta:2}
-    ]
-  },
-  {
-    nome: "STANZA DEL CUSTODE",
-    colore: "#00A4AC",
-    tipo: "quiz",
-    domande: [
-      {testo:"Quante sedie con stemma araldico sono presenti nella Great Hall?", opzioni:["10","12","14","16"], risposta:1},
-      {testo:"Quanti volumi catalogati ci sono nella Library?", opzioni:["400","405","412","420"], risposta:2},
-      {testo:"Quanti manoscritti miniati sono conservati nella Library?", opzioni:["3","5","7","10"], risposta:1},
-      {testo:"Di che materiale è il tavolo centrale nella Great Hall?", opzioni:["Rovere","Noce","Quercia","Mogano"], risposta:2},
-      {testo:"Quanti pezzi compongono il servizio d’argento nella Dining Hall?", opzioni:["60","68","72","75"], risposta:2},
-      {testo:"Quanti ritratti di famiglia sono catalogati e assicurati tra gli oggetti di valore?", opzioni:["12","14","16","18"], risposta:1},
-      {testo:"Quale anno è indicato come aggiornamento dell’impianto di illuminazione nella Great Hall?", opzioni:["1985","1990","1998","2000"], risposta:2},
-      {testo:"Quanti pezzi compongono il servizio bicchieri in cristallo molato nella Dining Hall?", opzioni:["Non specificato","72","60","50"], risposta:0},
-      {testo:"Quanti manoscritti miniati sono conservati in teca climatizzata?", opzioni:["3","5","7","10"], risposta:1},
-      {testo:"Dove è conservato il Galateo di Monsignor della Casa?", opzioni:["Tavolo della Dining Hall","Leggio in rovere nella Library","Scrivania in Master Apartments","Credenza nella Dining Hall"], risposta:1}
-    ]
-  },
-  {
-    nome: "CASTELLO DI LADY ELEONORA",
-    colore: "#003EAC",
-    tipo: "frase",
-    testo:"Hai raccolto tutte le lettere sparse in giro per il percorso? Se sì, ricomponi la frase aggiungendo gli spazi mancanti."
-  }
-];
-</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>A casa di Mrs. Rose Bear 2.0 – Visitor Passport</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- html5-qrcode per scanner QR -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <!-- Google Fonts – IM Fell English (corpo manche) -->
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet"/>
+  <!-- Libel Suit via @font-face sarà in style.css; fallback serif in attesa del font -->
 </head>
 <body>
-<div id="game-container">
-  <!-- Qui andranno le schermate dinamiche generate da JS -->
+
+<!-- ═══════════════════════════════════════════════
+     OVERLAY: ISTRUZIONI INIZIALI
+═══════════════════════════════════════════════ -->
+<div id="overlay-instructions" class="overlay-fullscreen" role="dialog" aria-modal="true">
+  <div class="overlay-inner">
+    <button class="btn-close-overlay" id="btn-close-instructions" aria-label="Chiudi istruzioni">✕</button>
+    <h2 class="overlay-title">Benvenuto al gioco interattivo della mostra</h2>
+    <h1 class="overlay-game-title">"A casa di Mrs. Rose Bear 2.0"</h1>
+    <h3 class="overlay-subtitle">il Visitor Passport!</h3>
+    <p>
+      Rispondi correttamente alle domande per guadagnare il timbro e completare il tuo
+      <strong>Passaporto da visitatore di Little Country</strong>.
+    </p>
+    <p>
+      Nelle postazioni lungo il percorso di visita troverai dei piccoli cartelli tramite cui
+      potrai accedere alle varie manche del gioco, scannerizzando il <strong>QR-CODE</strong> o
+      appoggiando il telefono nell'area dedicata (se il dispositivo è abilitato per la
+      tecnologia NFC).
+    </p>
+    <p class="overlay-cta">Buon divertimento!</p>
+  </div>
 </div>
-<script src="game.js"></script>
+
+<!-- ═══════════════════════════════════════════════
+     HEADER FISSO
+═══════════════════════════════════════════════ -->
+<header id="app-header" class="app-header hidden">
+  <span class="header-title">A casa di Mrs. Rose Bear 2.0</span>
+  <div class="header-user" id="header-user">
+    <img id="header-photo" class="header-photo hidden" src="" alt="Foto profilo" />
+    <span id="header-nickname" class="header-nickname"></span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════
+     SCHERMATA HOME / SETUP
+═══════════════════════════════════════════════ -->
+<main id="screen-home" class="screen screen-home">
+  <div class="home-center">
+    <img src="immagini/ROSE.png" alt="Mrs. Rose Bear" class="home-rose" onerror="this.style.display='none'" />
+    <div class="home-form" id="home-form">
+      <label for="input-nickname" class="sr-only">Il tuo nickname</label>
+      <input
+        type="text"
+        id="input-nickname"
+        class="nickname-input"
+        placeholder="Inserisci il tuo nickname"
+        maxlength="24"
+        autocomplete="off"
+      />
+      <button id="btn-play" class="btn-primary">Gioca</button>
+    </div>
+    <!-- Appare dopo nickname -->
+    <div id="home-photo-section" class="hidden">
+      <button id="btn-take-photo" class="btn-secondary">📷 Scatta una foto</button>
+      <input type="file" id="input-photo" accept="image/*" capture="user" class="hidden" />
+    </div>
+    <!-- Apri passaporto per la prima volta -->
+    <div id="home-passport-btn-wrap" class="hidden">
+      <button id="btn-open-passport-home" class="btn-passport-home">Apri il Passaporto</button>
+    </div>
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════════
+     SCHERMATA PASSAPORTO
+═══════════════════════════════════════════════ -->
+<div id="screen-passport" class="screen hidden screen-passport">
+  <div class="passport-container">
+    <!-- Copertina -->
+    <div class="passport-page" id="passport-cover">
+      <img src="immagini/COPERTINA.png" alt="Copertina Passaporto" class="passport-cover-bg" onerror="this.style.opacity=0.2"/>
+      <div class="passport-cover-info">
+        <img id="passport-photo-img" src="" alt="Foto visitatore" class="passport-photo-small hidden" />
+        <p class="passport-cover-label">Il Visitor Passport di</p>
+        <p class="passport-cover-name" id="passport-cover-name"></p>
+      </div>
+    </div>
+
+    <!-- Pagina 1: Timbri 1-3 -->
+    <div class="passport-page hidden" id="passport-page-1">
+      <img src="immagini/PAGINA_PASSAPORTO.png" alt="" class="passport-page-bg" onerror="this.style.opacity=0.1"/>
+      <div class="passport-stamps-layout">
+        <div class="stamps-col">
+          <div class="stamp-slot" id="pstamp-1"><img src="immagini/TIMBRO_1.png" alt="Timbro 1" class="stamp-img locked"/><span class="stamp-label">Maestro di Cucito</span></div>
+          <div class="stamp-slot" id="pstamp-2"><img src="immagini/TIMBRO_2.png" alt="Timbro 2" class="stamp-img locked"/><span class="stamp-label">Farina e Lievito</span></div>
+          <div class="stamp-slot" id="pstamp-3"><img src="immagini/TIMBRO_3.png" alt="Timbro 3" class="stamp-img locked"/><span class="stamp-label">Insegnante provetto</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagina 2: Timbri 4-6 (no timbro manche6) -->
+    <div class="passport-page hidden" id="passport-page-2">
+      <img src="immagini/PAGINA_PASSAPORTO.png" alt="" class="passport-page-bg" onerror="this.style.opacity=0.1"/>
+      <div class="passport-stamps-layout">
+        <div class="stamps-col">
+          <div class="stamp-slot" id="pstamp-4"><img src="immagini/TIMBRO_4.png" alt="Timbro 4" class="stamp-img locked"/><span class="stamp-label">Super aiutante</span></div>
+          <div class="stamp-slot" id="pstamp-5"><img src="immagini/TIMBRO_5.png" alt="Timbro 5" class="stamp-img locked"/><span class="stamp-label">Lettore di storie</span></div>
+          <div class="stamp-slot" id="pstamp-7"><img src="immagini/TIMBRO_7.png" alt="Timbro 7" class="stamp-img locked"/><span class="stamp-label">Musicofilo doc</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagina 3: Timbri 8-10 -->
+    <div class="passport-page hidden" id="passport-page-3">
+      <img src="immagini/PAGINA_PASSAPORTO.png" alt="" class="passport-page-bg" onerror="this.style.opacity=0.1"/>
+      <div class="passport-stamps-layout">
+        <div class="stamps-col">
+          <div class="stamp-slot" id="pstamp-8"><img src="immagini/TIMBRO_8.png" alt="Timbro 8" class="stamp-img locked"/><span class="stamp-label">Dottor Giornalaio</span></div>
+          <div class="stamp-slot" id="pstamp-9"><img src="immagini/TIMBRO_9.png" alt="Timbro 9" class="stamp-img locked"/><span class="stamp-label">Mitico Custode</span></div>
+          <div class="stamp-slot" id="pstamp-10"><img src="immagini/TIMBRO_10.png" alt="Timbro 10" class="stamp-img locked"/><span class="stamp-label">Persona dal cuore d'oro</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigazione passaporto -->
+    <div class="passport-nav">
+      <button id="passport-prev" class="passport-arrow" aria-label="Pagina precedente">◀</button>
+      <span id="passport-page-indicator" class="passport-indicator"></span>
+      <button id="passport-next" class="passport-arrow" aria-label="Pagina successiva">▶</button>
+    </div>
+    <button id="btn-close-passport" class="btn-close-passport">✕ Chiudi</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCHERMATA MANCHE (contenuto dinamico)
+═══════════════════════════════════════════════ -->
+<div id="screen-manche" class="screen hidden screen-manche">
+  <!-- Intro splash della manche -->
+  <div id="manche-splash" class="manche-splash hidden">
+    <img id="manche-splash-img" src="" alt="" class="manche-splash-img" />
+  </div>
+
+  <div id="manche-content" class="manche-content">
+    <h2 id="manche-subtitle" class="manche-subtitle"></h2>
+    <!-- Feedback risposta -->
+    <div id="answer-feedback" class="answer-feedback hidden"></div>
+    <!-- Area gioco dinamica -->
+    <div id="game-area" class="game-area"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     OVERLAY FINE GIOCO
+═══════════════════════════════════════════════ -->
+<div id="overlay-end" class="overlay-fullscreen hidden">
+  <div class="end-inner">
+    <h1 class="end-title">GRAZIE PER AVER GIOCATO</h1>
+    <button id="btn-end-passport" class="btn-primary">Apri il Passaporto</button>
+    <button id="btn-collage" class="btn-secondary" style="margin-top:1rem">📷 Foto Ricordo</button>
+    <canvas id="collage-canvas" class="hidden"></canvas>
+    <a id="collage-download" class="hidden btn-primary" download="visitor-passport.png">⬇ Scarica il collage</a>
+    <div id="end-dissolve" class="hidden end-dissolve">
+      <button id="btn-exit" class="btn-exit">ESCI</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     OVERLAY FIORI-PAROLA
+═══════════════════════════════════════════════ -->
+<div id="overlay-fioriparola" class="overlay-fullscreen hidden" role="dialog">
+  <div class="overlay-inner">
+    <button class="btn-close-overlay" id="btn-close-fioriparola">✕</button>
+    <h2 class="overlay-title">🌸 FIORI-PAROLA</h2>
+    <p>Hai trovato una lettera segreta lungo il percorso? Aggiungila qui!</p>
+    <div class="fioriparola-display" id="fioriparola-display"></div>
+    <div class="fioriparola-input-row">
+      <input type="text" id="fioriparola-input" maxlength="1" class="fioriparola-input" placeholder="A" />
+      <button id="btn-add-letter" class="btn-primary">Aggiungi</button>
+    </div>
+    <button id="btn-reset-letters" class="btn-secondary" style="margin-top:.5rem;font-size:.8rem">Cancella tutto</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     OVERLAY QR SCANNER
+═══════════════════════════════════════════════ -->
+<div id="overlay-scanner" class="overlay-fullscreen hidden" role="dialog">
+  <div class="overlay-inner">
+    <button class="btn-close-overlay" id="btn-close-scanner">✕</button>
+    <h2 class="overlay-title">📷 Scanner QR</h2>
+    <div id="qr-reader" style="width:100%;max-width:350px;margin:0 auto;"></div>
+    <p class="scanner-hint">Inquadra il QR Code della postazione</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     BARRA DI NAVIGAZIONE INFERIORE (fissa)
+═══════════════════════════════════════════════ -->
+<nav id="bottom-nav" class="bottom-nav hidden" aria-label="Navigazione principale">
+  <!-- Fiori-Parola: appare dalla Manche 6 in poi -->
+  <button id="nav-fioriparola" class="nav-btn nav-btn-fioriparola hidden" aria-label="Fiori Parola">
+    🌸<span>FIORI-PAROLA</span>
+  </button>
+  <button id="nav-passport" class="nav-btn nav-btn-passport" aria-label="Passaporto">
+    📖<span>PASSAPORTO</span>
+  </button>
+  <button id="nav-scanner" class="nav-btn nav-btn-scanner" aria-label="Scanner QR">
+    📷<span>SCANNER</span>
+  </button>
+</nav>
+
+<script src="script.js"></script>
 </body>
 </html>
-
-
