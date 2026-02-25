@@ -38,7 +38,8 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 /* ═══ HOME ═══ */
 .screen-home{display:flex;align-items:center;justify-content:center;flex-direction:column;background:var(--bg)}
 .home-center{display:flex;flex-direction:column;align-items:center;gap:20px;padding:24px 20px;width:100%;max-width:480px}
-.home-rose{max-width:min(300px,80vw);object-fit:contain;filter:drop-shadow(0 8px 24px rgba(0,0,0,.4))}
+.home-rose{max-width:min(90px,24vw);object-fit:contain;filter:drop-shadow(0 8px 24px rgba(0,0,0,.4))}
+.home-tagline{font-family:'IM Fell English',serif;font-style:italic;font-size:clamp(.95rem,3vw,1.2rem);color:#fff;text-align:center;margin-top:8px;opacity:.9;line-height:1.4}
 .home-form{display:flex;flex-direction:column;gap:14px;width:100%;max-width:340px}
 .nickname-input{
   background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.3);
@@ -273,14 +274,12 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
       <button id="btn-take-photo" class="btn-secondary">📷 Scatta una foto</button>
       <input type="file" id="input-photo" accept="image/*" capture="user" class="hidden"/>
     </div>
-    <div id="home-passport-btn-wrap" class="hidden">
-      <button id="btn-open-passport-home" class="btn-primary">Apri il Passaporto</button>
-    </div>
+    <p id="home-tagline" class="home-tagline hidden">Un mondo da fiaba a pochi passi dalla realtà</p>
   </div>
 </main>
 
 <!-- ═══ PASSAPORTO ═══ -->
-
+<div id="screen-passport" class="screen-passport">
   <div class="passport-container">
     <div class="passport-page" id="passport-cover">
       <img src="immagini/COPERTINA.png" alt="" class="passport-cover-bg" onerror="this.style.opacity=0"/>
@@ -320,8 +319,8 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
       <button id="passport-next" class="passport-arrow">▶</button>
     </div>
     <button id="btn-close-passport" class="btn-close-passport">✕ Chiudi</button>
-  </div>
-</div>
+  </div><!-- /passport-container -->
+</div><!-- /screen-passport -->
 
 <!-- ═══ SCHERMATA MANCHE ═══ -->
 <div id="screen-manche" class="screen hidden screen-manche">
@@ -528,7 +527,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       showHeader(); showNav();
       document.getElementById('home-form').classList.add('hidden');
       document.getElementById('home-photo-section').classList.add('hidden');
-      document.getElementById('home-passport-btn-wrap').classList.remove('hidden');
+      document.getElementById('home-tagline').classList.remove('hidden');
     }
   }
   if(S.fp6) document.getElementById('nav-fioriparola').classList.remove('hidden');
@@ -548,8 +547,8 @@ function initHome(){
   if(S.nick){
     showHeader(); showNav();
     document.getElementById('home-form').classList.add('hidden');
-    document.getElementById('home-photo-section').classList.remove('hidden');
-    document.getElementById('home-passport-btn-wrap').classList.remove('hidden');
+    document.getElementById('home-photo-section').classList.add('hidden');
+    document.getElementById('home-tagline').classList.remove('hidden');
   }
 }
 
@@ -561,7 +560,7 @@ function setupHome(){
     updateHeader(); showHeader(); showNav();
     document.getElementById('home-form').classList.add('hidden');
     document.getElementById('home-photo-section').classList.remove('hidden');
-    document.getElementById('home-passport-btn-wrap').classList.remove('hidden');
+    document.getElementById('home-tagline').classList.remove('hidden');
   };
   document.getElementById('btn-take-photo').onclick=()=>document.getElementById('input-photo').click();
   document.getElementById('input-photo').onchange=(e)=>{
@@ -571,10 +570,11 @@ function setupHome(){
       S.photo=ev.target.result;S.save();
       const img=document.getElementById('header-photo');
       img.src=S.photo;img.classList.remove('hidden');
+      // Nascondi il tasto foto dopo lo scatto
+      document.getElementById('home-photo-section').classList.add('hidden');
     };
     r.readAsDataURL(f);
   };
-  document.getElementById('btn-open-passport-home').onclick=openPassport;
 }
 
 function showHeader(){document.getElementById('app-header').classList.remove('hidden')}
