@@ -299,7 +299,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
     <div class="passport-page hidden" id="passport-page-1">
       <img src="immagini/PAGINA_PASSAPORTO.png" alt="" class="passport-page-bg" onerror="this.style.opacity=0"/>
       <div class="passport-stamps-layout"><div class="stamps-col">
-        <div class="stamp-slot" id="pstamp-1"><img src="immagini/TIMBRO_1.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Maestro di Cucito</span></div>
+        <div class="stamp-slot" id="pstamp-1"><img src="immagini/TIMBRO_1.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Amante dei fiori</span></div>
         <div class="stamp-slot" id="pstamp-2"><img src="immagini/TIMBRO_2.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Farina e Lievito</span></div>
         <div class="stamp-slot" id="pstamp-3"><img src="immagini/TIMBRO_3.png" alt="" class="stamp-img locked" onerror="this.style.display='none'"/><span class="stamp-label">Insegnante provetto</span></div>
       </div></div>
@@ -395,6 +395,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 /* ── DATI MANCHE ── */
 const MANCHE = {
   1:{name:'FIORAIA',color:'#006E00',splash:'immagini/FIORAIA.png',type:'image-quiz',
+    intro:'Nel giardino di Mrs. Rose Bear sbocciano fiori d\'ogni tipo, ciascuno con il suo nome segreto. Sei abbastanza curioso da scoprirli tutti?',
     questions:[
       {img:'immagini/FIORE_1.png',opts:['Papavero','Anemone giapponese','Peonia','Elleboro'],ok:1},
       {img:'immagini/FIORE_2.png',opts:['Ortensia','Plumbago','Allium','Agapanto'],ok:2},
@@ -402,6 +403,7 @@ const MANCHE = {
       {img:'immagini/FIORE_4.png',opts:['Brugo','Erica','Fabiana imbricata','Veronica'],ok:0}
     ]},
   2:{name:'BAKERY',color:'#873324',splash:'immagini/BAKERY.png',type:'quiz',
+    intro:'Il profumo di pane appena sfornato si diffonde per tutto Little Country. La bakery di Mrs. Rose è un luogo magico dove farina, acqua e pazienza si trasformano in meraviglie. Dimmi, conosci i segreti dell\'arte del pane?',
     sub:'Scegli la risposta corretta',
     questions:[
       {q:'Qual è la funzione principale del lievito madre nella panificazione?',opts:['Aggiungere colore alla crosta','Far lievitare l\'impasto naturalmente e dare sapore','Conservare il pane più a lungo'],ok:1},
@@ -410,6 +412,7 @@ const MANCHE = {
       {q:'Quale pane è morbido, leggermente dolce e usato per colazioni in stile giapponese?',opts:['Wholemeal loaf','Milk bread loaf','Victoria sandwich loaf'],ok:1}
     ]},
   3:{name:'SCUOLA',color:'#24872B',splash:'immagini/SCUOLA.png',type:'quiz',
+    intro:'La piccola scuola di Little Country è un posto incantato dove le parole danzano sui libri e i numeri raccontano storie. Mrs. Rose Bear crede che il sapere sia la magia più potente di tutte. Sei pronto a dimostrare il tuo?',
     sub:'Completa la frase',
     questions:[
       {q:'"_______, uguaglianza, fraternità"',opts:['Libertà','Pace','Amore','Onore'],ok:0},
@@ -422,6 +425,8 @@ const MANCHE = {
       {q:'"La _______ quadrata moltiplicata per se stessa dà quel numero"',opts:['Radice','Somma','Differenza','Potenza'],ok:0}
     ]},
   4:{name:'CABINA TELEFONICA',color:'#FF0014',splash:'immagini/CABINA_TELEFONICA.png',type:'matching',
+    intro:'Dalla sua finestra, Mrs. Rose Bear ha scritto un bigliettino con tutto ciò di cui ha bisogno. Ma i negozianti di Little Country sono tanti e i pacchi vanno consegnati al posto giusto! Puoi aiutarla?',
+    matchIntro:'Mrs. Rose è raffreddata e non può uscire.\nAbbina ciascun oggetto al negozio giusto.',
     intro:'Mrs. Rose è raffreddata e non può uscire.\nAbbina ciascun oggetto al negozio giusto.',
     pairs:[
       {obj:'Nastri',ok:'Merceria'},{obj:'Peluche',ok:'Negozio di giocattoli'},
@@ -430,10 +435,12 @@ const MANCHE = {
       {obj:'Mazzo di rose',ok:'Fioreria'},{obj:'Carta da lettere',ok:'Post office'}
     ],
     shops:['Merceria','Negozio di giocattoli','Post office','Tea room','Fioreria']},
-  5:{name:'BOOKCROSSING',color:'#248287',splash:'immagini/BOOKCROSSING.png',type:'bookcrossing'},
+  5:{name:'BOOKCROSSING',color:'#248287',splash:'immagini/BOOKCROSSING.png',type:'bookcrossing',
+    intro:'In questo angolo magico di Little Country, i libri viaggiano liberi di mano in mano, portando con sé sogni e avventure. Quale storia vorresti lasciare in dono? E quale vorresti portare con te?'},
   6:{name:'INGRESSO DEL COTTAGE',color:'#888',splash:'immagini/INGRESSO_COTTAGE.png',type:'alert6',noStamp:true,
     alertText:'Durante il percorso hai notato qualcosa di insolito? Qualche lettera persa lungo le vie di Little Country! Torna indietro e annotale tutte, chissà… Ti potrebbero servire!'},
   7:{name:'STANZA RICREATIVA',color:'#1A2AE6',splash:'immagini/STANZA_RICREATIVA.png',type:'music',
+    intro:'Nelle serate di Little Country, le note musicali fluttuano nell\'aria come farfalle dorate. Mrs. Rose Bear ama i grandi compositori e le loro melodie immortali. Ascolta con attenzione… riesci a riconoscerli?',
     sub:'Abbina l\'opera al compositore',
     questions:[
       {audio:'audio/MUSICA_1.wav',opts:['Wolfgang Amadeus Mozart','Joseph Haydn','Franz Schubert','Anton Bruckner'],ok:0},
@@ -442,6 +449,7 @@ const MANCHE = {
       {audio:'audio/MUSICA_4.wav',opts:['Rimsky Korsakov','Claude Debussy','Hector Berlioz','Camille Saint-Saëns'],ok:0}
     ]},
   8:{name:'SALOTTO',color:'#89C689',splash:'immagini/SALOTTO.png',type:'quiz',
+    intro:'Nel salotto di Mrs. Rose Bear, giornali da tutto il mondo sono sparsi sul tavolino tra tazze di tè fumante. Ogni testata racconta una storia, ogni paese ha la sua voce. Conosci il mondo abbastanza da riconoscerle?',
     sub:'Giornali dal mondo!',
     questions:[
       {q:'El Mundo appartiene a:',opts:['UK','Spagna','USA','Francia'],ok:1},
@@ -450,6 +458,7 @@ const MANCHE = {
       {q:'Vogue appartiene a:',opts:['UK','Francia','USA','Spagna'],ok:2}
     ]},
   9:{name:'STANZA DEL CUSTODE',color:'#00A4AC',splash:'immagini/STANZA_CUSTODE.png',type:'quiz',
+    intro:'Il custode del castello tiene tutto sotto controllo con occhio attento e memoria infallibile. Ogni oggetto, ogni stanza, ogni dettaglio è catalogato nel suo grande libro. Hai la stessa precisione?',
     sub:'L\'inventario del castello',
     questions:[
       {q:'Quante sedie con stemma araldico sono nella Great Hall?',opts:['10','12','14','16'],ok:1},
@@ -469,7 +478,7 @@ const MANCHE = {
     correctLetters:'ACHIAMALEPAROLLEBELLELLAGENTILEZZAELAMAGIAATE'}
 };
 
-const STAMP_NAMES={1:'Maestro di Cucito',2:'Farina e Lievito',3:'Insegnante provetto',4:'Super aiutante',5:'Lettore di storie',7:'Musicofilo doc',8:'Dottor Giornalaio',9:'Mitico Custode',10:'Persona dal cuore d\'oro'};
+const STAMP_NAMES={1:'Amante dei fiori',2:'Farina e Lievito',3:'Insegnante provetto',4:'Super aiutante',5:'Lettore di storie',7:'Musicofilo doc',8:'Dottor Giornalaio',9:'Mitico Custode',10:'Persona dal cuore d\'oro'};
 
 /* ── STATO ── */
 const S={
@@ -749,6 +758,24 @@ function loadManche(n){
 
 /* ══════════════ RENDER MANCHE ══════════════ */
 function renderManche(n,d){
+  if(d.intro){
+    showIntro(d, ()=>renderMancheContent(n,d));
+  } else {
+    renderMancheContent(n,d);
+  }
+}
+
+function showIntro(d, callback){
+  const area=document.getElementById('game-area');
+  area.innerHTML=`
+    <div style="text-align:center;padding:24px 16px;animation:feedbackPop .5s ease">
+      <p style="font-family:'IM Fell English',serif;font-style:italic;font-size:clamp(1rem,3.5vw,1.2rem);line-height:1.7;opacity:.92;margin-bottom:28px;background:rgba(255,255,255,.07);border-radius:14px;padding:20px 18px">${d.intro}</p>
+      <button class="btn-primary" id="btn-start-manche" style="min-width:160px;font-size:1.1rem">Inizia ✨</button>
+    </div>`;
+  document.getElementById('btn-start-manche').onclick=callback;
+}
+
+function renderMancheContent(n,d){
   switch(d.type){
     case 'image-quiz': renderQuiz(n,d,true); break;
     case 'quiz':       renderQuiz(n,d,false); break;
@@ -897,7 +924,7 @@ function renderMusic(n,d){
 /* ── Manche 4 – Matching ── */
 function renderMatching(n,d){
   const area=document.getElementById('game-area');
-  let html=`<p class="match-intro">${d.intro.replace(/\n/g,'<br>')}</p><div class="match-game">`;
+  let html=`<p class="match-intro">${(d.matchIntro||'').replace(/\n/g,'<br>')}</p><div class="match-game">`;
   d.pairs.forEach((p,i)=>{
     const opts=d.shops.map(s=>`<option value="${s}">${s}</option>`).join('');
     html+=`<div class="match-item" id="mi-${i}"><span class="match-object-label">${p.obj}</span><select class="match-select" id="ms-${i}"><option value="">Scegli…</option>${opts}</select></div>`;
@@ -1025,11 +1052,21 @@ function onComplete(n,d){
     setTimeout(()=>t.remove(),3500);
   }
   if(n===10){setTimeout(showEndGame,3000);return}
+
+  const stampImg = STAMP_NAMES[n] ? `<img src="immagini/TIMBRO_${n}.png" style="width:70px;height:70px;object-fit:contain;flex-shrink:0" onerror="this.style.display='none'"/>` : '';
+  const stampLabel = STAMP_NAMES[n] ? `<span style="font-family:var(--font-title);font-size:1.1rem;color:#fff">${STAMP_NAMES[n]}</span>` : '';
+
   document.getElementById('game-area').innerHTML=`
-    <div style="text-align:center;padding:40px;animation:feedbackPop .4s ease">
-      <p style="font-size:1.2rem;font-weight:bold;margin-bottom:10px">🎉 Manche completata!</p>
-      <p style="opacity:.7;font-size:.9rem">Torna all'esposizione per la prossima tappa!</p>
-      <button class="btn-secondary" style="margin-top:16px" onclick="openPassport()">Vedi il tuo Passaporto</button>
+    <div style="text-align:center;padding:32px 20px;animation:feedbackPop .4s ease">
+      <p style="font-size:1.3rem;font-weight:bold;margin-bottom:20px">🎉 Manche completata!</p>
+      ${STAMP_NAMES[n] ? `
+      <div style="display:flex;align-items:center;justify-content:center;gap:14px;background:rgba(255,255,255,.1);border-radius:14px;padding:16px 20px;margin-bottom:24px">
+        ${stampImg}
+        ${stampLabel}
+      </div>` : ''}
+      <button class="btn-primary" style="margin-bottom:12px;width:100%;max-width:280px" onclick="openPassport()">📖 Vedi il tuo Passaporto</button>
+      <br/>
+      <button class="btn-secondary" style="width:100%;max-width:280px;margin-top:8px" onclick="goHome()">🏠 Torna alla Home</button>
     </div>`;
 }
 
@@ -1041,6 +1078,15 @@ function showFeedback(msg,ok){
   fb.classList.remove('hidden');
 }
 function hideFeedback(){document.getElementById('answer-feedback').classList.add('hidden')}
+
+/* ══════════════ TORNA ALLA HOME ══════════════ */
+function goHome(){
+  showOnly('screen-home');
+  showHeader(); showNav();
+  document.getElementById('home-form').classList.add('hidden');
+  document.getElementById('home-photo-section').classList.add('hidden');
+  document.getElementById('home-tagline').classList.remove('hidden');
+}
 
 /* ══════════════ FINE GIOCO ══════════════ */
 function showEndGame(){
