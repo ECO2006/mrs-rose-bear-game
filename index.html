@@ -443,10 +443,10 @@ const MANCHE = {
     intro:'Nelle serate di Little Country, le note musicali fluttuano nell\'aria come farfalle dorate. Mrs. Rose Bear ama i grandi compositori e le loro melodie immortali. Ascolta con attenzione… riesci a riconoscerli?',
     sub:'Abbina l\'opera al compositore',
     questions:[
-      {audio:'audio/MUSICA_1.wav',opts:['Wolfgang Amadeus Mozart','Joseph Haydn','Franz Schubert','Anton Bruckner'],ok:0},
-      {audio:'audio/MUSICA_2.wav',opts:['Ludwig van Beethoven','Johann Sebastian Bach','Richard Wagner','Johannes Brahms'],ok:1},
-      {audio:'audio/MUSICA_3.wav',opts:['Giuseppe Verdi','Gioachino Rossini','Antonio Vivaldi','Claudio Monteverdi'],ok:2},
-      {audio:'audio/MUSICA_4.wav',opts:['Rimsky Korsakov','Claude Debussy','Hector Berlioz','Camille Saint-Saëns'],ok:0}
+      {audio:'audio/MUSICA_1.mp3',opts:['Wolfgang Amadeus Mozart','Joseph Haydn','Franz Schubert','Anton Bruckner'],ok:0},
+      {audio:'audio/MUSICA_2.mp3',opts:['Ludwig van Beethoven','Johann Sebastian Bach','Richard Wagner','Johannes Brahms'],ok:1},
+      {audio:'audio/MUSICA_3.mp3',opts:['Giuseppe Verdi','Gioachino Rossini','Antonio Vivaldi','Claudio Monteverdi'],ok:2},
+      {audio:'audio/MUSICA_4.mp3',opts:['Rimsky Korsakov','Claude Debussy','Hector Berlioz','Camille Saint-Saëns'],ok:0}
     ]},
   8:{name:'SALOTTO',color:'#89C689',splash:'immagini/SALOTTO.png',type:'quiz',
     intro:'Nel salotto di Mrs. Rose Bear, giornali da tutto il mondo sono sparsi sul tavolino tra tazze di tè fumante. Ogni testata racconta una storia, ogni paese ha la sua voce. Conosci il mondo abbastanza da riconoscerle?',
@@ -493,13 +493,28 @@ const S={
 /* ── AUDIO ── */
 const AC={};
 function playAudio(f,loop=false){
+  // Prova mp3 prima (universale), poi wav come fallback
+  const mp3=f.replace(/\.wav$/i,'.mp3');
+  const src=mp3; // usa sempre mp3
   try{
-    if(!AC[f])AC[f]=new Audio(f);
-    const a=AC[f];a.loop=loop;a.currentTime=0;
-    a.play().catch(()=>{});return a;
+    if(!AC[src])AC[src]=new Audio(src);
+    const a=AC[src];a.loop=loop;a.currentTime=0;
+    a.play().catch(()=>{
+      // fallback a wav se mp3 non trovato
+      try{
+        if(!AC[f])AC[f]=new Audio(f);
+        const b=AC[f];b.loop=loop;b.currentTime=0;
+        b.play().catch(()=>{});
+      }catch(e){}
+    });
+    return a;
   }catch(e){return null;}
 }
-function stopAudio(f){try{if(AC[f]){AC[f].pause();AC[f].currentTime=0}}catch(e){}}
+function stopAudio(f){
+  [f, f.replace(/\.wav$/i,'.mp3')].forEach(s=>{
+    try{if(AC[s]){AC[s].pause();AC[s].currentTime=0}}catch(e){}
+  });
+}
 const sfx={
   passport:()=>playAudio('audio/PASSAPORTO.wav'),
   stamp:()=>playAudio('audio/TIMBRO.wav'),
