@@ -752,7 +752,8 @@ function startQR(){
           showOnly('screen-manche'); showHeader(); showNav();
           loadManche(+mn);
         } else {
-          document.getElementById('qr-status').textContent='⚠️ QR non riconosciuto: '+decodedText.substring(0,40);
+          // Mostra testo completo per debug
+          document.getElementById('qr-status').textContent='⚠️ Letto: "'+decodedText+'"';
         }
       },
       (err)=>{
