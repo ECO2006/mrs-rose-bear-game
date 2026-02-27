@@ -784,7 +784,7 @@ function showIntro(d, callback){
   const area=document.getElementById('game-area');
   area.innerHTML=`
     <div style="text-align:center;padding:24px 16px;animation:feedbackPop .5s ease">
-      <p style="font-family:'IM Fell English',serif;font-style:italic;font-size:clamp(1rem,3.5vw,1.2rem);line-height:1.7;opacity:.92;margin-bottom:28px;background:rgba(255,255,255,.07);border-radius:14px;padding:20px 18px">${d.intro}</p>
+      <p style="font-family:'IM Fell English',serif;font-weight:bold;font-size:clamp(1.1rem,4vw,1.4rem);line-height:1.7;opacity:.95;margin-bottom:28px;background:rgba(255,255,255,.07);border-radius:14px;padding:20px 18px">${d.intro}</p>
       <button class="btn-primary" id="btn-start-manche" style="min-width:160px;font-size:1.1rem">Inizia ✨</button>
     </div>`;
   document.getElementById('btn-start-manche').onclick=callback;
