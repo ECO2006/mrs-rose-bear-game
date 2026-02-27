@@ -375,8 +375,9 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
   <div class="overlay-inner">
     <button class="btn-close-overlay" id="btn-close-scanner">✕</button>
     <h2 class="overlay-title">📷 Scanner QR</h2>
-    <div id="qr-reader" style="width:100%;max-width:340px;margin:0 auto"></div>
-    <p class="scanner-hint">Inquadra il QR Code della postazione</p>
+    <div id="qr-reader" style="width:100%;max-width:340px;margin:0 auto;border-radius:12px;overflow:hidden"></div>
+    <p id="qr-status" class="scanner-hint" style="min-height:2em;margin-top:12px;font-size:.9rem;text-align:center">Avvio fotocamera…</p>
+    <p style="font-size:.75rem;opacity:.5;text-align:center;margin-top:4px">Inquadra il QR Code della postazione</p>
   </div>
 </div>
 
@@ -716,30 +717,93 @@ function setupFioriParola(){
 
 /* ══════════════ SCANNER QR ══════════════ */
 let qrScanner=null;
+let qrActive=false;
+
 function openScanner(){
   document.getElementById('overlay-scanner').classList.remove('hidden');
-  if(qrScanner)return;
+  if(qrActive)return;
+  startQR();
+}
+
+function startQR(){
+  const readerEl=document.getElementById('qr-reader');
+  readerEl.innerHTML='';
+  document.getElementById('qr-status').textContent='Avvio fotocamera…';
+
   try{
-    qrScanner=new Html5QrcodeScanner('qr-reader',{fps:10,qrbox:{width:250,height:250}},false);
-    qrScanner.render(decoded=>{
-      let mn=null;
-      try{mn=new URL(decoded).searchParams.get('manche')}
-      catch(e){if(/^\d+$/.test(decoded.trim()))mn=decoded.trim()}
-      if(mn){
-        closeScanner();
-        document.getElementById('overlay-scanner').classList.add('hidden');
-        if(!S.nick){alert('Inserisci prima il tuo nickname!');return}
-        showOnly('screen-manche'); showHeader(); showNav();
-        loadManche(+mn);
+    qrScanner=new Html5Qrcode('qr-reader');
+    const config={fps:15,qrbox:{width:240,height:240},aspectRatio:1.0};
+
+    qrScanner.start(
+      {facingMode:'environment'}, // fotocamera posteriore
+      config,
+      (decodedText)=>{
+        // QR letto con successo
+        document.getElementById('qr-status').textContent='✅ QR letto!';
+        const mn=extractManche(decodedText);
+        if(mn){
+          stopQR();
+          document.getElementById('overlay-scanner').classList.add('hidden');
+          if(!S.nick){
+            showOnly('screen-home');
+            alert('Inserisci prima il tuo nickname dalla Home!');
+            return;
+          }
+          showOnly('screen-manche'); showHeader(); showNav();
+          loadManche(+mn);
+        } else {
+          document.getElementById('qr-status').textContent='⚠️ QR non riconosciuto: '+decodedText.substring(0,40);
+        }
+      },
+      (err)=>{
+        // Errore di scansione (normale durante l'inquadratura)
+        document.getElementById('qr-status').textContent='📷 Inquadra il QR Code…';
       }
-    },()=>{});
-  }catch(e){console.warn('QR non disponibile')}
+    ).then(()=>{
+      qrActive=true;
+      document.getElementById('qr-status').textContent='📷 Inquadra il QR Code della postazione';
+    }).catch(err=>{
+      document.getElementById('qr-status').textContent='❌ Fotocamera non disponibile: '+err;
+      qrActive=false;
+    });
+  }catch(e){
+    document.getElementById('qr-status').textContent='❌ Scanner non supportato su questo browser';
+  }
 }
+
+function extractManche(text){
+  // Prova come URL completo
+  try{
+    const url=new URL(text);
+    const mn=url.searchParams.get('manche');
+    if(mn && /^\d+$/.test(mn)) return mn;
+  }catch(e){}
+  // Prova come URL parziale con ?manche=
+  const m=text.match(/[?&]manche=(\d+)/i);
+  if(m) return m[1];
+  // Prova come numero semplice
+  if(/^\d+$/.test(text.trim())) return text.trim();
+  return null;
+}
+
+function stopQR(){
+  if(qrScanner && qrActive){
+    try{qrScanner.stop().then(()=>{qrScanner.clear();qrScanner=null})}catch(e){}
+    qrActive=false;
+  }
+  document.getElementById('qr-reader').innerHTML='';
+  document.getElementById('qr-status').textContent='';
+}
+
 function closeScanner(){
-  if(qrScanner){try{qrScanner.clear()}catch(e){}qrScanner=null;document.getElementById('qr-reader').innerHTML=''}
+  stopQR();
 }
+
 function setupScanner(){
-  document.getElementById('btn-close-scanner').onclick=()=>{closeScanner();document.getElementById('overlay-scanner').classList.add('hidden')}
+  document.getElementById('btn-close-scanner').onclick=()=>{
+    closeScanner();
+    document.getElementById('overlay-scanner').classList.add('hidden');
+  };
 }
 
 /* ══════════════ CARICA MANCHE ══════════════ */
