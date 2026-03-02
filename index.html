@@ -215,7 +215,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .frase-display{background:rgba(255,255,255,.1);border-radius:var(--r);padding:14px 16px;font-size:1.1rem;letter-spacing:2px;text-align:center;font-family:monospace;margin-bottom:16px;word-break:break-all;min-height:54px}
 .frase-input-row{display:flex;gap:8px;margin-bottom:12px}
 .frase-input{flex:1;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;color:var(--white);padding:10px 14px;font-size:1rem;font-family:var(--font-body);outline:none}
-.frase-invia-btn{background:var(--white);color:var(--bg);border:none;border-radius:8px;padding:10px 18px;font-weight:bold;cursor:pointer}
+.frase-invia-btn{background:var(--white);color:var(--bg);border:none;border-radius:8px;padding:10px 18px;font-weight:bold;cursor:pointer;margin-bottom:calc(var(--nh) + 16px);width:100%}
 .frase-intro-text{font-family:var(--font-manche);font-style:italic;font-size:.9rem;line-height:1.6;margin-bottom:16px;opacity:.85;background:rgba(255,255,255,.06);border-radius:var(--r);padding:12px 14px}
 
 /* ═══ TOAST TIMBRO ═══ */
@@ -691,7 +691,15 @@ function renderPP(){
 }
 
 function setupPassport(){
-  document.getElementById('btn-close-passport').onclick=()=>document.getElementById('screen-passport').classList.remove('visible');
+  document.getElementById('btn-close-passport').onclick=()=>{
+    const pp=document.getElementById('screen-passport');
+    pp.classList.remove('visible');
+    // Se era stato aperto dalla schermata finale, torna lì
+    if(pp.dataset.fromEnd==='1'){
+      pp.dataset.fromEnd='';
+      document.getElementById('overlay-end').classList.remove('hidden');
+    }
+  };
   document.getElementById('passport-prev').onclick=()=>{if(ppPage>0){ppPage--;sfx.pagine();renderPP()}};
   document.getElementById('passport-next').onclick=()=>{if(ppPage<3){ppPage++;sfx.pagine();renderPP()}};
 }
@@ -1185,6 +1193,8 @@ function setupEnd(){
   document.getElementById('btn-end-passport').onclick=()=>{
     document.getElementById('overlay-end').classList.add('hidden');
     updatePassport(); ppPage=0; renderPP();
+    // Segna che il passaporto è stato aperto dalla schermata finale
+    document.getElementById('screen-passport').dataset.fromEnd='1';
     document.getElementById('screen-passport').classList.add('visible');
   };
   document.getElementById('btn-collage').onclick=generateCollage;
